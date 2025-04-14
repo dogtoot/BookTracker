@@ -16,7 +16,6 @@
         >
 
         <ImageView
-            android:src="@drawable/cover"
             android:id="@+id/book_cover_img"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

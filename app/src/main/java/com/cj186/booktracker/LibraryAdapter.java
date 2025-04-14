@@ -8,40 +8,24 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class LibraryAdapter extends RecyclerView.Adapter<BookViewHolder> {
-    ArrayList<Book> bookList;
-    RecyclerView recyclerView;
+    private final ArrayList<Book> bookList;
 
-    public LibraryAdapter(ArrayList<Book> bookList, RecyclerView recyclerView){
-        this.bookList = bookList;
-        this.recyclerView = recyclerView;
+    public LibraryAdapter(ArrayList<Book> bookList, boolean useFavorites){
+        if(useFavorites)
+            this.bookList = bookList.stream()
+                    .filter(Book::isFavorite)
+                    .collect(Collectors.toCollection(ArrayList::new));
+        else
+            this.bookList = bookList;
     }
 
     @NonNull
     @Override
     public BookViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.book_cover, parent, false);
-
-        int width = recyclerView.getWidth();
-        int height = view.getHeight();
-
-        int itemHeight = (int) (width * 0.3);
-
-        ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-        layoutParams.width = itemHeight;
-        view.setLayoutParams(layoutParams);
-
-        /*parent.post(() -> {
-            int parentHeight = parent.getHeight();
-
-            int itemHeight = (int) (width * 0.25);
-
-            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-            layoutParams.height = itemHeight;
-            view.setLayoutParams(layoutParams);
-        });*/
-
         return new BookViewHolder(view);
     }
 

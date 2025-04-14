@@ -10,7 +10,7 @@ public class Book {
     private Status status;
     private String yearPublished;
     private String ISBN;
-    private boolean favoriteStatus;
+    private boolean favoriteStatus = false;
 
     public Book(Bitmap image, String title, String author, String description, Status status, String yearPublished, String ISBN, boolean favoriteStatus) {
         this.image = image;
