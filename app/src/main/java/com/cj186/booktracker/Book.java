@@ -1,9 +1,13 @@
 package com.cj186.booktracker;
 
 import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class Book {
-    private Bitmap image;
+import androidx.annotation.NonNull;
+
+public class Book implements Parcelable {
+    private byte[] imageBytes;
     private String title;
     private String author;
     private String description;
@@ -12,8 +16,8 @@ public class Book {
     private String ISBN;
     private boolean favoriteStatus = false;
 
-    public Book(Bitmap image, String title, String author, String description, Status status, String yearPublished, String ISBN, boolean favoriteStatus) {
-        this.image = image;
+    public Book(byte[] imageBytes, String title, String author, String description, Status status, String yearPublished, String ISBN, boolean favoriteStatus) {
+        this.imageBytes = imageBytes;
         this.title = title;
         this.author = author;
         this.description = description;
@@ -23,6 +27,29 @@ public class Book {
         this.favoriteStatus = favoriteStatus;
     }
 
+    protected Book(Parcel in) {
+        imageBytes = new byte[in.readInt()];;
+        in.readByteArray(imageBytes);
+        title = in.readString();
+        author = in.readString();
+        description = in.readString();
+        yearPublished = in.readString();
+        ISBN = in.readString();
+        favoriteStatus = in.readByte() != 0;
+    }
+
+    public static final Creator<Book> CREATOR = new Creator<Book>() {
+        @Override
+        public Book createFromParcel(Parcel in) {
+            return new Book(in);
+        }
+
+        @Override
+        public Book[] newArray(int size) {
+            return new Book[size];
+        }
+    };
+
     public boolean isFavorite() {
         return favoriteStatus;
     }
@@ -31,8 +58,8 @@ public class Book {
         this.favoriteStatus = favoriteStatus;
     }
 
-    public Bitmap getImage() {
-        return image;
+    public byte[] getImageBytes() {
+        return imageBytes;
     }
 
     public String getTitle() {
@@ -63,8 +90,25 @@ public class Book {
         this.ISBN = ISBN;
     }
 //Testing
-    public Book(Bitmap image, Status status) {
-        this.image = image;
+    public Book(byte[] image, Status status) {
+        this.imageBytes = image;
         this.status = status;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeInt(imageBytes.length);
+        dest.writeByteArray(imageBytes);
+        dest.writeString(title);
+        dest.writeString(author);
+        dest.writeString(description);
+        dest.writeString(yearPublished);
+        dest.writeString(ISBN);
+        dest.writeByte((byte) (favoriteStatus ? 1 : 0));
     }
 }

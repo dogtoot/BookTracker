@@ -34,6 +34,7 @@
         app:layout_constraintVertical_bias="1">
 
         <Button
+            android:id="@+id/favorites_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -48,7 +49,7 @@
             android:background="#000000" />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/add_book_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

@@ -1,5 +1,6 @@
 package com.cj186.booktracker;
 
+import android.graphics.BitmapFactory;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,7 +19,8 @@ public class BookViewHolder extends RecyclerView.ViewHolder{
     }
 
     public void bind(Book book){
-        cover.setImageBitmap(book.getImage());
+        byte[] imageBytes = book.getImageBytes();
+        cover.setImageBitmap(BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length));
         status.setText(book.getStatus().getLabel());
     }
 }
