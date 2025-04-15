@@ -3,4 +3,5 @@
     <string name="add_book_btn_str">Add Book</string>
     <string name="favorites_btn_str">Favorites</string>
     <string name="no_books_in_library">No Books in Library</string>
+    <string name="cancel">Cancel</string>
 </resources>

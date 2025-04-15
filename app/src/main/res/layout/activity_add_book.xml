@@ -5,6 +5,267 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".add_book_activity">
+    tools:context=".AddBookActivity">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/statusBarColor"
+        android:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <LinearLayout
+        android:id="@+id/isbn_btn_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="0">
+
+        <Button
+            android:id="@+id/scan_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/square_button"
+            android:drawSelectorOnTop="true"
+            android:text="Enter ISBN"
+            android:textSize="16sp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#000000" />
+
+        <Button
+            android:id="@+id/enter_isbn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/square_button"
+            android:drawSelectorOnTop="true"
+            android:text="Scan ISBN"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_btn_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1">
+
+        <Button
+            android:id="@+id/cancel_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/square_button"
+            android:drawSelectorOnTop="true"
+            android:text="@string/cancel"
+            android:textSize="16sp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#000000" />
+
+        <Button
+            android:id="@+id/add_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/square_button"
+            android:drawSelectorOnTop="true"
+            android:text="@string/add_book_btn_str"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/book_cover"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/image_selection"
+        android:padding="1dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_btn_bar"
+        app:layout_constraintDimensionRatio="H,1:1.5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.029"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/isbn_btn_bar"
+        app:layout_constraintVertical_bias="0.037"
+        app:layout_constraintWidth_percent=".35" />
+
+    <TextView
+        android:id="@+id/book_title_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Book Title:"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_btn_bar"
+        app:layout_constraintEnd_toStartOf="@+id/book_title"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toEndOf="@+id/book_cover"
+        app:layout_constraintTop_toBottomOf="@+id/isbn_btn_bar"
+        app:layout_constraintVertical_bias="0.06" />
+
+    <EditText
+        android:id="@+id/book_title"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:ems="10"
+        android:inputType="text"
+        android:maxLength="50"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_btn_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent=".04"
+        app:layout_constraintHorizontal_bias=".8"
+        app:layout_constraintStart_toEndOf="@+id/book_cover"
+        app:layout_constraintTop_toBottomOf="@+id/isbn_btn_bar"
+        app:layout_constraintVertical_bias="0.05"
+        app:layout_constraintWidth_percent=".4" />
+
+    <EditText
+        android:id="@+id/book_isbn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:ems="10"
+        android:inputType="number"
+        android:maxLength="13"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_btn_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent=".04"
+        app:layout_constraintHorizontal_bias="0.8"
+        app:layout_constraintStart_toEndOf="@+id/book_cover"
+        app:layout_constraintTop_toBottomOf="@+id/isbn_btn_bar"
+        app:layout_constraintVertical_bias="0.10"
+        app:layout_constraintWidth_percent=".4" />
+
+    <TextView
+        android:id="@+id/book_isbn_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ISBN:"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_btn_bar"
+        app:layout_constraintEnd_toStartOf="@+id/book_isbn"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toEndOf="@+id/book_cover"
+        app:layout_constraintTop_toBottomOf="@+id/isbn_btn_bar"
+        app:layout_constraintVertical_bias="0.11" />
+
+    <EditText
+        android:id="@+id/book_author"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:ems="10"
+        android:inputType="text"
+        android:maxLength="50"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_btn_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent=".04"
+        app:layout_constraintHorizontal_bias="0.8"
+        app:layout_constraintStart_toEndOf="@+id/book_cover"
+        app:layout_constraintTop_toBottomOf="@+id/isbn_btn_bar"
+        app:layout_constraintVertical_bias="0.15"
+        app:layout_constraintWidth_percent=".4" />
+
+    <TextView
+        android:id="@+id/book_author_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Author:"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_btn_bar"
+        app:layout_constraintEnd_toStartOf="@+id/book_isbn"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toEndOf="@+id/book_cover"
+        app:layout_constraintTop_toBottomOf="@+id/isbn_btn_bar"
+        app:layout_constraintVertical_bias="0.16" />
+
+    <Spinner
+        android:id="@+id/status_dropdown"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_btn_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent=".05"
+        app:layout_constraintHorizontal_bias="0.688"
+        app:layout_constraintStart_toEndOf="@+id/book_cover"
+        app:layout_constraintTop_toBottomOf="@+id/isbn_btn_bar"
+        app:layout_constraintVertical_bias="0.231"
+        app:layout_constraintWidth_percent=".5"
+        android:background="@drawable/dropdown"/>
+
+    <EditText
+        android:id="@+id/book_description"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:ems="10"
+        android:gravity="start|top"
+        android:inputType="textMultiLine"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_btn_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias=".8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/status_dropdown"
+        app:layout_constraintVertical_bias="0.092"
+        app:layout_constraintHeight_percent=".2"
+        app:layout_constraintWidth_percent=".75"/>
+
+    <TextView
+        android:id="@+id/book_description_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Description:"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_btn_bar"
+        app:layout_constraintEnd_toStartOf="@+id/book_description"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/isbn_btn_bar"
+        app:layout_constraintVertical_bias="0.419" />
+
+    <EditText
+        android:id="@+id/book_year_published"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="number"
+        android:maxLength="4"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_btn_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.939"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/book_description"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintWidth_percent=".2" />
+
+    <TextView
+        android:id="@+id/book_year_published_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Year Published:"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_btn_bar"
+        app:layout_constraintEnd_toStartOf="@+id/book_year_published"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/isbn_btn_bar"
+        app:layout_constraintVertical_bias="0.6" />
 </androidx.constraintlayout.widget.ConstraintLayout>
+
