@@ -3,6 +3,7 @@ package com.cj186.booktracker;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -38,12 +39,18 @@ public class AddBookActivity extends AppCompatActivity {
 
         populateViews();
 
+        addBookBtn.setOnClickListener(this::addBook);
+
         String[] items = {Status.COMPLETED.getLabel(), Status.REREADING.getLabel(), Status.PLANNING_TO_READ.getLabel(), Status.CURRENTLY_READING.getLabel()};
         registerImagePicker();
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, items);
 
         statusDropDown.setAdapter(adapter);
+    }
+
+    private void addBook(View view){
+
     }
 
     private void populateViews(){
