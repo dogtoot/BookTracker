@@ -1,13 +1,15 @@
-package com.cj186.booktracker;
+package com.cj186.booktracker.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DBHelper extends SQLiteOpenHelper {
+    // Database information.
     private static final String DATABASE_NAME = "library.db";
     private static final int DATABASE_VERSION = 1;
 
+    // Database columns.
     private static final String TABLE_BOOKS = "books";
     private static final String COLUMN_ID = "_id";
     private static final String COLUMN_IMAGE_BLOB = "image";
@@ -19,6 +21,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String COLUMN_YEAR_PUBLISHED = "year_published";
     private static final String COLUMN_FAVORITE_STATUS = "favorite_status";
 
+    // Database creation string.
     private static final String SQL_CREATE_TABLE =
             "CREATE TABLE " + TABLE_BOOKS + " (" +
                     COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -27,14 +30,17 @@ public class DBHelper extends SQLiteOpenHelper {
                     COLUMN_AUTHOR + " TEXT, " +
                     COLUMN_ISBN + " TEXT, " +
                     COLUMN_DESCRIPTION + " TEXT, " +
-                    COLUMN_STATUS + " INTEGER, " +
+                    COLUMN_STATUS + " TEXT, " +
                     COLUMN_YEAR_PUBLISHED + " TEXT, " +
-                    COLUMN_FAVORITE_STATUS + " INTEGER);";
+                    COLUMN_FAVORITE_STATUS + " INTEGER, " +
+                    "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
 
+    // Constructor for our DBHelper.
     public DBHelper(Context ctx){
         super(ctx, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+    // onCreate we instantiate the database.
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_TABLE);
@@ -45,6 +51,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+    // Column getters.
     public static String getTableBooks() {
         return TABLE_BOOKS;
     }

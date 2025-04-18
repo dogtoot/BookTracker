@@ -4,5 +4,11 @@
         <item name="colorPrimary">#386994</item>
     </style>
 
+    <style name="AlertDialogCustom" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:windowMinWidthMajor">90%</item>
+        <item name="android:windowMinWidthMinor">90%</item>
+        <item name="colorPrimary">#386994</item>
+    </style>
+
     <style name="Theme.BookTracker" parent="Base.Theme.BookTracker" />
 </resources>

@@ -2,6 +2,9 @@
     <string name="app_name">BookTracker</string>
     <string name="add_book_btn_str">Add Book</string>
     <string name="favorites_btn_str">Favorites</string>
+    <string name="all_books_btn_str">All Books</string>
     <string name="no_books_in_library">No Books in Library</string>
     <string name="cancel">Cancel</string>
+    <string name="scan_a_barcode">Scan a barcode</string>
+    <string name="cancel_scan">Cancel</string>
 </resources>

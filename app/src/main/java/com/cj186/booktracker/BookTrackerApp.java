@@ -2,6 +2,8 @@ package com.cj186.booktracker;
 
 import android.app.Application;
 
+import com.cj186.booktracker.database.SQLHandler;
+
 public class BookTrackerApp extends Application {
     @Override
     public void onCreate() {

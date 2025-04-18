@@ -1,12 +1,12 @@
-package com.cj186.booktracker;
+package com.cj186.booktracker.model;
 
-import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
 public class Book implements Parcelable {
+    // Fields for a book.
     private byte[] imageBytes;
     private String title;
     private String author;
@@ -17,6 +17,7 @@ public class Book implements Parcelable {
     private boolean favoriteStatus = false;
 
     public Book(byte[] imageBytes, String title, String author, String description, Status status, String yearPublished, String ISBN, boolean favoriteStatus) {
+        // Constructor
         this.imageBytes = imageBytes;
         this.title = title;
         this.author = author;
@@ -28,6 +29,7 @@ public class Book implements Parcelable {
     }
 
     protected Book(Parcel in) {
+        // Create a book from a parcel.
         imageBytes = new byte[in.readInt()];;
         in.readByteArray(imageBytes);
         title = in.readString();
@@ -38,6 +40,7 @@ public class Book implements Parcelable {
         favoriteStatus = in.readByte() != 0;
     }
 
+    // Default Creator for a parcelable.
     public static final Creator<Book> CREATOR = new Creator<Book>() {
         @Override
         public Book createFromParcel(Parcel in) {
@@ -50,14 +53,21 @@ public class Book implements Parcelable {
         }
     };
 
+    // Getter and setter for favorite.
     public boolean isFavorite() {
         return favoriteStatus;
     }
-
     public void setFavoriteStatus(boolean favoriteStatus) {
         this.favoriteStatus = favoriteStatus;
     }
 
+    // Getter and setter for status.
+    public Status getStatus() {
+        return status;
+    }
+    public void setStatus(Status status){ this.status = status; }
+
+    // Getters for all other values.
     public byte[] getImageBytes() {
         return imageBytes;
     }
@@ -74,10 +84,6 @@ public class Book implements Parcelable {
         return description;
     }
 
-    public Status getStatus() {
-        return status;
-    }
-
     public String getYearPublished() {
         return yearPublished;
     }
@@ -89,11 +95,6 @@ public class Book implements Parcelable {
     public void setISBN(String ISBN) {
         this.ISBN = ISBN;
     }
-//Testing
-    public Book(byte[] image, Status status) {
-        this.imageBytes = image;
-        this.status = status;
-    }
 
     @Override
     public int describeContents() {
@@ -102,13 +103,17 @@ public class Book implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
+        // Write the length of imageBytes to the parcel, for later reading.
         dest.writeInt(imageBytes.length);
+        // Write all fields.
         dest.writeByteArray(imageBytes);
         dest.writeString(title);
         dest.writeString(author);
         dest.writeString(description);
         dest.writeString(yearPublished);
         dest.writeString(ISBN);
+
+        // Write our boolean favorite status as a byte, either 1 or 0.
         dest.writeByte((byte) (favoriteStatus ? 1 : 0));
     }
 }
