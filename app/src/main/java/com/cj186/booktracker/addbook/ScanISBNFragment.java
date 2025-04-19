@@ -16,16 +16,10 @@ import androidx.fragment.app.DialogFragment;
 
 import com.cj186.booktracker.R;
 import com.journeyapps.barcodescanner.CompoundBarcodeView;
-import com.journeyapps.barcodescanner.BarcodeCallback;
-import com.journeyapps.barcodescanner.BarcodeResult;
-import com.google.zxing.ResultPoint;
 import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.DefaultDecoderFactory;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
 
 import android.Manifest;
 import android.widget.Toast;
@@ -62,17 +56,13 @@ public class ScanISBNFragment extends DialogFragment {
         AddBookActivity bookActivity = (AddBookActivity) requireActivity();
         barcodeView.getBarcodeView().setDecoderFactory(new DefaultDecoderFactory(Collections.singleton(BarcodeFormat.EAN_13)));
         barcodeView.setStatusText("Scan an ISBN barcode.");
-        ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA);
-        barcodeView.decodeContinuous(new BarcodeCallback() {
-            @Override
-            public void barcodeResult(BarcodeResult result) {
-                barcodeView.pause();
-                if(result.getText().length() == 13)
-                    bookActivity.getBookFromAPI(result.getText());
-                else
-                    Toast.makeText(bookActivity, "Unable to retrieve ISBN.", Toast.LENGTH_LONG).show();
-                dismiss();
-            }
+        barcodeView.decodeContinuous(result -> {
+            barcodeView.pause();
+            if(result.getText().length() == 13)
+                bookActivity.getBookFromAPI(result.getText());
+            else
+                Toast.makeText(bookActivity, "Unable to retrieve ISBN.", Toast.LENGTH_LONG).show();
+            dismiss();
         });
     }
 

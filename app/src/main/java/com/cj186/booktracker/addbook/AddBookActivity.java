@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -61,8 +60,8 @@ public class AddBookActivity extends AppCompatActivity {
         populateViews();
 
         // Add a listener to our addbook button.
-        addBookBtn.setOnClickListener(this::addBook);
-        cancelBtn.setOnClickListener((View) -> finish());
+        addBookBtn.setOnClickListener(view -> addBook());
+        cancelBtn.setOnClickListener(view -> finish());
 
         scanISBNBtn.setOnClickListener(view -> {
             ScanISBNFragment dialog = new ScanISBNFragment();
@@ -73,11 +72,11 @@ public class AddBookActivity extends AppCompatActivity {
         registerImagePicker();
 
         // Add our statuses to our dropdown menu.
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, items);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
         statusDropDown.setAdapter(adapter);
     }
 
-    private void addBook(View view){
+    private void addBook(){
         // Insert a book using the values we got from the user.
         SQLHandler.insertBook(
                 imageViewToByteArray(cover),

@@ -16,9 +16,7 @@ public class SQLHandler {
         db = helper.getWritableDatabase();
     }
 
-    public static void insertBook(byte[] imageBytes, String title, String author, String description,
-                                  Status status, String yearPublished, String ISBN, boolean favoriteStatus){
-
+    public static void insertBook(byte[] imageBytes, String title, String author, String description, Status status, String yearPublished, String ISBN, boolean favoriteStatus){
         // Put all book values into Content values.
         ContentValues values = new ContentValues();
         values.put(DBHelper.getColumnImageBlob(), imageBytes);

@@ -44,8 +44,8 @@ public class MainActivity extends AppCompatActivity {
 
         populateLibrary();
 
-        favoriteBtn.setOnClickListener(this::swapLibrary);
-        addBook.setOnClickListener(this::startAddBookActivity);
+        favoriteBtn.setOnClickListener(view -> swapLibrary());
+        addBook.setOnClickListener(view -> startAddBookActivity());
     }
 
     @Override
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         SQLHandler.close();
     }
 
-    private void startAddBookActivity(View view){
+    private void startAddBookActivity(){
         // Start the add book activity using an intent.
         Intent intent = new Intent(this, AddBookActivity.class);
         startActivity(intent);
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void swapLibrary(View view){
+    private void swapLibrary(){
         boolean useFavorites = favoriteBtn.getText().toString().equals(getString(R.string.favorites_btn_str));
         favoriteBtn.setText(useFavorites ? R.string.all_books_btn_str : R.string.favorites_btn_str);
 

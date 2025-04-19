@@ -14,7 +14,7 @@ public class Book implements Parcelable {
     private Status status;
     private String yearPublished;
     private String ISBN;
-    private boolean favoriteStatus = false;
+    private boolean favoriteStatus;
 
     public Book(byte[] imageBytes, String title, String author, String description, Status status, String yearPublished, String ISBN, boolean favoriteStatus) {
         // Constructor

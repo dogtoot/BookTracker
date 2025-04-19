@@ -6,7 +6,6 @@ import com.cj186.booktracker.model.Book;
 import com.cj186.booktracker.model.Status;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
