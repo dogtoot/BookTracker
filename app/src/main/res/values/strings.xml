@@ -7,4 +7,8 @@
     <string name="cancel">Cancel</string>
     <string name="scan_a_barcode">Scan a barcode</string>
     <string name="cancel_scan">Cancel</string>
+    <string name="close">Close</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="is_this_the_correct_book">Is this the correct book?</string>
 </resources>

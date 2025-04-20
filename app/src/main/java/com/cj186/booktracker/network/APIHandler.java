@@ -22,28 +22,33 @@ public class APIHandler {
         String parentUrl = "https://openlibrary.org";
 
         try {
-            JSONObject response = new JSONObject(getAPIResponseFromURL( parentUrl + "/isbn/" + ISBN + ".json"));
-            String publishYear = response.getString("publish_date");
-            JSONArray workIDObject = response.getJSONArray("works");
+            JSONObject responseJson;
+            try{
+                responseJson = new JSONObject(getAPIResponseFromURL( parentUrl + "/isbn/" + ISBN + ".json"));
+            }
+            catch (Exception e){
+                return null;
+            }
+            String publishYear = responseJson.getString("publish_date");
+            JSONArray workIDObject = responseJson.getJSONArray("works");
             JSONObject works = workIDObject.getJSONObject(0);
             String workID = works.getString("key");
 
-            response = new JSONObject(getAPIResponseFromURL(parentUrl + workID + ".json"));
-            String title = response.getString("title");
-            String cover = response.getJSONArray("covers").get(0).toString();
+            responseJson = new JSONObject(getAPIResponseFromURL(parentUrl + workID + ".json"));
+            String title = responseJson.getString("title");
+            String cover = responseJson.getJSONArray("covers").get(0).toString();
 
-            JSONArray authorBlock = response.getJSONArray("authors");
+            JSONArray authorBlock = responseJson.getJSONArray("authors");
             JSONObject authorPluralObject = authorBlock.getJSONObject(0);
             JSONObject authorObject = authorPluralObject.getJSONObject("author");
-            Log.w("block", authorObject.toString());
             String authorID = authorObject.getString("key");
 
             JSONObject authorResponse = new JSONObject(getAPIResponseFromURL( parentUrl + authorID + ".json"));
             String author = authorResponse.getString("name");
 
             String description = "";
-            if(response.toString().contains("description"))
-                description = response.getString("description");
+            if(responseJson.toString().contains("description"))
+                description = responseJson.getString("description");
             Status status = Status.PLANNING_TO_READ;
             byte[] imageBytes = getImageFromUrl("https://covers.openlibrary.org/b/id/" + cover + "-L.jpg");
 
@@ -120,7 +125,6 @@ public class APIHandler {
             }
             catch (IOException e){
                 Log.e("API Error", "Unable to close buffered reader.");
-                throw new RuntimeException(e);
             }
 
         }

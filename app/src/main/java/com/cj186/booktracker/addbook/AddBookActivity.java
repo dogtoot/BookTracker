@@ -20,6 +20,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.cj186.booktracker.network.APIHandler;
 import com.cj186.booktracker.model.Book;
@@ -92,29 +93,56 @@ public class AddBookActivity extends AppCompatActivity {
         finish();
     }
 
-    protected void getBookFromAPI(String isbn){
+    protected void populateBook(String isbn){
         new Thread(() -> {
             Book openLibraryBook = APIHandler.getBookFromISBN(isbn);
             new Handler(Looper.getMainLooper()).post(() -> {
-                if(openLibraryBook != null){
-                    int indexOfStatus = 0;
-                    for(int i = 0; i < items.length; i++)
-                        if(items[i].equals(openLibraryBook.getStatus().getLabel()))
-                            indexOfStatus = i;
-                    statusDropDown.setSelection(indexOfStatus);
-                    bookTitle.setText(openLibraryBook.getTitle());
-                    bookAuthor.setText(openLibraryBook.getAuthor());
-                    bookDescription.setText(openLibraryBook.getDescription());
-                    ISBN.setText(openLibraryBook.getISBN());
-                    yearPublished.setText(openLibraryBook.getYearPublished());
-                    favoriteStatus.setChecked(openLibraryBook.isFavorite());
-                    cover.setImageBitmap(BitmapFactory.decodeByteArray(openLibraryBook.getImageBytes(), 0, openLibraryBook.getImageBytes().length));
+                if(openLibraryBook != null) {
+                    askUserIfCorrectBook(openLibraryBook);
                 }
                 else{
                     Toast.makeText(this, "Unable to get book.", Toast.LENGTH_LONG).show();
                 }
             });
         }).start();
+    }
+
+    private void askUserIfCorrectBook(Book book){
+        CorrectBookFragment correctBookFragment = new CorrectBookFragment(book);
+        correctBookFragment.show(getSupportFragmentManager(), "isCorrect");
+        getSupportFragmentManager().setFragmentResultListener("correct_book_result", this, (requestKey, result) -> {
+            boolean isCorrect = result.getBoolean("isCorrect");
+            if (isCorrect) {
+                fillBookFields(book);
+            }
+        });
+
+    }
+
+    private void fillBookFields(Book openLibraryBook){
+        int indexOfStatus = 0;
+        for(int i = 0; i < items.length; i++){
+            if(items[i].equals(openLibraryBook.getStatus().getLabel())){
+                indexOfStatus = i;
+                break;
+            }
+        }
+        statusDropDown.setSelection(indexOfStatus);
+        bookTitle.setText(openLibraryBook.getTitle());
+        bookAuthor.setText(openLibraryBook.getAuthor());
+        bookDescription.setText(openLibraryBook.getDescription());
+        ISBN.setText(openLibraryBook.getISBN());
+        yearPublished.setText(openLibraryBook.getYearPublished());
+        favoriteStatus.setChecked(openLibraryBook.isFavorite());
+        byte[] imageBytes = openLibraryBook.getImageBytes();
+        if (imageBytes != null && imageBytes.length > 0) {
+            new Thread(() -> {
+                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    cover.setImageBitmap(bitmap);
+                });
+            }).start();
+        }
     }
 
     private static byte[] imageViewToByteArray(ImageView view){
