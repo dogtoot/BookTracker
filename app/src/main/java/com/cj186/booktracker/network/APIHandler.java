@@ -16,8 +16,54 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class APIHandler {
+    private static final String[] TRUSTED_PUBLISHERS = {
+            // General and Fiction Publishers
+            "Penguin Random House",
+            "HarperCollins",
+            "Macmillan",
+            "Simon & Schuster",
+            "Hachette Book Group",
+            "Bloomsbury",
+            "Farrar, Straus, and Giroux",
+
+            // Science Fiction & Fantasy Publishers
+            "Tor Books",
+            "Del Rey Books",
+            "Gollancz",
+            "Baen Books",
+            "Orbit",
+            "Viking Press",
+
+            // Non-Fiction Publishers
+            "W.W. Norton & Company",
+            "Oxford University Press",
+            "Princeton University Press",
+            "Harvard University Press",
+            "Routledge",
+
+            // Children's Book Publishers
+            "Scholastic",
+            "Candlewick Press",
+            "Little, Brown Books for Young Readers",
+            "Penguin Young Readers",
+
+            // Academic and Specialized Publishers
+            "Cambridge University Press",
+            "Springer",
+            "MIT Press",
+            "Routledge",
+
+            // Independent Publishers
+            "Graywolf Press",
+            "Coffee House Press",
+            "The New Press",
+            "Akashic Books"
+    };
+
     public static Book getBookFromISBN(String ISBN) {
         String parentUrl = "https://openlibrary.org";
 
@@ -34,11 +80,58 @@ public class APIHandler {
             JSONObject works = workIDObject.getJSONObject(0);
             String workID = works.getString("key");
 
-            responseJson = new JSONObject(getAPIResponseFromURL(parentUrl + workID + ".json"));
-            String title = responseJson.getString("title");
-            String cover = responseJson.getJSONArray("covers").get(0).toString();
+            responseJson = new JSONObject(getAPIResponseFromURL(parentUrl + workID + "/editions.json?limit=100"));
+            JSONArray editions = responseJson.getJSONArray("entries");
 
-            JSONArray authorBlock = responseJson.getJSONArray("authors");
+            ArrayList<JSONObject> editionObjects = new ArrayList<>();
+
+            // This code killed one of my two ram sticks :)
+            for (int i = 0; i < editions.length(); i++) {
+                JSONObject edition = editions.getJSONObject(i);
+                JSONArray languages = edition.optJSONArray("languages");
+
+                try{
+                    edition.getString("description");
+                    edition.getJSONArray("covers").get(0);
+
+                    JSONArray publishers = edition.getJSONArray("publishers");
+                    edition.getString("publish_date");
+
+                    if (languages != null) {
+                        // Check if one of the languages is English
+                        for (int j = 0; j < languages.length(); j++) {
+                            JSONObject language = languages.getJSONObject(j);
+                            String languageKey = language.optString("key");
+                            if(languageKey.equals("/languages/eng")){
+                                for(int k = 0; k < publishers.length(); k++){
+                                    String publisher = publishers.getString(k);
+                                    if(isTrustedPublished(publisher)){
+                                        //editionObjects.add(edition);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                catch(Exception ignored){}
+            }
+
+            JSONObject fallBackEdition = new JSONObject(getAPIResponseFromURL(parentUrl + workID + ".json"));
+            if(editionObjects.isEmpty())
+                editionObjects.add(fallBackEdition);
+
+            editionObjects.sort((o1, o2) -> {
+                try {
+                    return o1.getString("publish_date").compareTo(o2.getString("publish_date"));
+                }
+                catch (Exception ignored) {}
+                return 0;
+            });
+
+            String title = editionObjects.get(0).getString("title");
+            String cover = editionObjects.get(0).getJSONArray("covers").get(0).toString();
+
+            JSONArray authorBlock = fallBackEdition.getJSONArray("authors");
             JSONObject authorPluralObject = authorBlock.getJSONObject(0);
             JSONObject authorObject = authorPluralObject.getJSONObject("author");
             String authorID = authorObject.getString("key");
@@ -47,8 +140,15 @@ public class APIHandler {
             String author = authorResponse.getString("name");
 
             String description = "";
-            if(responseJson.toString().contains("description"))
-                description = responseJson.getString("description");
+            if(editionObjects.get(0).toString().contains("description")){
+                try{
+                    JSONObject descriptionArray = editionObjects.get(0).getJSONObject("description");
+                    description = descriptionArray.getString("value");
+                }
+                catch (Exception ignored){
+                    description = editionObjects.get(0).getString("description");
+                }
+            }
             Status status = Status.PLANNING_TO_READ;
             byte[] imageBytes = getImageFromUrl("https://covers.openlibrary.org/b/id/" + cover + "-L.jpg");
 
@@ -60,6 +160,21 @@ public class APIHandler {
             return null;
         }
     }
+
+    public static boolean isTrustedPublished(String inputPublisher){
+        String normalizedInput = normalizeString(inputPublisher);
+        for(String trustedPublisher : TRUSTED_PUBLISHERS){
+            String normalizedTrusted = normalizeString(inputPublisher);
+            if(normalizedInput.contains(normalizedTrusted) || normalizedTrusted.contains(normalizedInput))
+                return true;
+        }
+        return false;
+    }
+
+    private static String normalizeString(String in){
+        return in.toLowerCase().replace("[^a-z0-9]", "");
+    }
+
 
     private static byte[] getImageFromUrl(String imageUrl){
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

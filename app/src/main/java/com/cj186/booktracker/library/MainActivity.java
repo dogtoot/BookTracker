@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        SQLHandler.init(this);
         populateViews();
         loadBooks();
 
@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         // Loop through all rows, and add them as a book to bookList.
         if (cursor.moveToFirst()) {
             do {
+                int id = cursor.getInt(cursor.getColumnIndexOrThrow(DBHelper.getColumnId()));
                 byte[] imageBytes = cursor.getBlob(cursor.getColumnIndexOrThrow(DBHelper.getColumnImageBlob()));
                 String title = cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.getColumnTitle()));
                 String author = cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.getColumnAuthor()));
@@ -90,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
                 String yearPublished = cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.getColumnYearPublished()));
                 boolean favoriteStatus = cursor.getInt(cursor.getColumnIndexOrThrow(DBHelper.getColumnFavoriteStatus())) != 0;
 
-                Book book = new Book(imageBytes, title, author, description, status, yearPublished, isbn, favoriteStatus);
+                Book book = new Book(id, imageBytes, title, author, description, status, yearPublished, isbn, favoriteStatus);
                 bookList.add(book);
             }
             while (cursor.moveToNext());

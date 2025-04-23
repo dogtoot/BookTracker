@@ -4,10 +4,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 
@@ -18,8 +16,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
 import com.cj186.booktracker.R;
-import com.cj186.booktracker.model.Book;
-import com.cj186.booktracker.network.APIHandler;
 import com.journeyapps.barcodescanner.CompoundBarcodeView;
 import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.DefaultDecoderFactory;
@@ -69,8 +65,14 @@ public class ScanISBNFragment extends DialogFragment {
         AddBookActivity addBookActivity = (AddBookActivity) requireActivity();
         CameraSettings settings = new CameraSettings();
         settings.setAutoFocusEnabled(true);
-
+        settings.setFocusMode(CameraSettings.FocusMode.AUTO);
         barcodeView.setCameraSettings(settings);
+        barcodeView.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                barcodeView.getBarcodeView().requestFocus();
+            }
+            return true;
+        });
         barcodeView.getBarcodeView().setDecoderFactory(
                 new DefaultDecoderFactory(Collections.singleton(BarcodeFormat.EAN_13)));
         barcodeView.setStatusText("Scan an ISBN barcode.");

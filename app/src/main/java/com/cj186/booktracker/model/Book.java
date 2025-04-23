@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 public class Book implements Parcelable {
     // Fields for a book.
+    private int id;
     private byte[] imageBytes;
     private String title;
     private String author;
@@ -28,10 +29,25 @@ public class Book implements Parcelable {
         this.favoriteStatus = favoriteStatus;
     }
 
+    public Book(int id, byte[] imageBytes, String title, String author, String description, Status status, String yearPublished, String ISBN, boolean favoriteStatus) {
+        // Constructor
+        this.id = id;
+        this.imageBytes = imageBytes;
+        this.title = title;
+        this.author = author;
+        this.description = description;
+        this.status = status;
+        this.yearPublished = yearPublished;
+        this.ISBN = ISBN;
+        this.favoriteStatus = favoriteStatus;
+    }
+
     protected Book(Parcel in) {
         // Create a book from a parcel.
-        imageBytes = new byte[in.readInt()];;
+        id = in.readInt();
+        imageBytes = new byte[in.readInt()];
         in.readByteArray(imageBytes);
+        status = Status.fromLabel(in.readString());
         title = in.readString();
         author = in.readString();
         description = in.readString();
@@ -66,6 +82,10 @@ public class Book implements Parcelable {
         return status;
     }
     public void setStatus(Status status){ this.status = status; }
+
+    public int getId() {
+        return id;
+    }
 
     // Getters for all other values.
     public byte[] getImageBytes() {
@@ -103,10 +123,12 @@ public class Book implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeInt(id);
         // Write the length of imageBytes to the parcel, for later reading.
         dest.writeInt(imageBytes.length);
         // Write all fields.
         dest.writeByteArray(imageBytes);
+        dest.writeString(status.getLabel());
         dest.writeString(title);
         dest.writeString(author);
         dest.writeString(description);
