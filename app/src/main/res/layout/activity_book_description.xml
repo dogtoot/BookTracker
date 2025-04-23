@@ -125,5 +125,18 @@
         app:layout_constraintVertical_bias=".05"
         android:autoLink="web"/>
 
+    <ImageButton
+        android:id="@+id/remove_book_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:src="@drawable/remove_book"
+        app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.049"
+        app:layout_constraintStart_toStartOf="@+id/toolbar"
+        app:layout_constraintTop_toTopOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="0.675" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

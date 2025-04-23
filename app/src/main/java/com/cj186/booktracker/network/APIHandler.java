@@ -106,7 +106,7 @@ public class APIHandler {
                                 for(int k = 0; k < publishers.length(); k++){
                                     String publisher = publishers.getString(k);
                                     if(isTrustedPublished(publisher)){
-                                        //editionObjects.add(edition);
+                                        editionObjects.add(edition);
                                     }
                                 }
                             }

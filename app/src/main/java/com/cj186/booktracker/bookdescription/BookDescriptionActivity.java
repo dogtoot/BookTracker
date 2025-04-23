@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -66,6 +67,13 @@ public class BookDescriptionActivity extends AppCompatActivity {
         description.setText((!book.getDescription().isEmpty()) ? book.getDescription() : "");
 
         Button closeBtn = findViewById(R.id.close_btn);
+        ImageButton deleteBtn = findViewById(R.id.remove_book_btn);
+        deleteBtn.setOnClickListener(v -> {
+            // Check if user is certain
+            SQLHandler.removeBook(book.getId());
+            finish();
+        });
+
         closeBtn.setOnClickListener(i -> {
             if(!status.getSelectedItem().equals(book.getStatus().getLabel()))
                 SQLHandler.updateBook(book.getId(), Status.fromLabel(status.getSelectedItem().toString()));
