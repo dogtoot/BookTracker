@@ -45,6 +45,8 @@ public class BookDescriptionActivity extends AppCompatActivity {
         Intent intent = getIntent();
         book = intent.getParcelableExtra("book_obj");
 
+        boolean storedFavoriteValue = book != null && book.isFavorite();
+
         ImageView cover = findViewById(R.id.book_cover);
         TextView title = findViewById(R.id.title);
         TextView author = findViewById(R.id.author);
@@ -68,18 +70,37 @@ public class BookDescriptionActivity extends AppCompatActivity {
 
         Button closeBtn = findViewById(R.id.close_btn);
         ImageButton deleteBtn = findViewById(R.id.remove_book_btn);
+        ImageButton favoriteBtn = findViewById(R.id.favorite_btn);
         deleteBtn.setOnClickListener(v -> {
-            // Check if user is certain
-            SQLHandler.removeBook(book.getId());
-            finish();
+            ConfirmDeleteFragment confirmDeleteFragment = new ConfirmDeleteFragment(book.getTitle());
+            confirmDeleteFragment.setOnConfirmationListener(result ->{
+                if(result){
+                    SQLHandler.removeBook(book.getId());
+                    finish();
+                }
+            });
+            confirmDeleteFragment.show(getSupportFragmentManager(), "confirmDialog");
         });
 
         closeBtn.setOnClickListener(i -> {
             if(!status.getSelectedItem().equals(book.getStatus().getLabel()))
                 SQLHandler.updateBook(book.getId(), Status.fromLabel(status.getSelectedItem().toString()));
-            //if(!status.getSelectedItem().equals(book.getStatus().getLabel()))
-            //    SQLHandler.updateBook(book.getId(), book.isFavorite());
+            if(!book.isFavorite() == storedFavoriteValue)
+                SQLHandler.updateBook(book.getId(), book.isFavorite());
             finish();
+        });
+
+        if(storedFavoriteValue)
+            favoriteBtn.setImageResource(R.drawable.filled_star);
+        else
+            favoriteBtn.setImageResource(R.drawable.unfilled_star);
+
+        favoriteBtn.setOnClickListener(i ->{
+            book.setFavoriteStatus(!book.isFavorite());
+            if(book.isFavorite())
+                favoriteBtn.setImageResource(R.drawable.filled_star);
+            else
+                favoriteBtn.setImageResource(R.drawable.unfilled_star);
         });
     }
 }
