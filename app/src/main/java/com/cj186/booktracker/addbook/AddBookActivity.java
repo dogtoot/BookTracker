@@ -69,6 +69,11 @@ public class AddBookActivity extends AppCompatActivity {
             dialog.show(getSupportFragmentManager(), "ScanISBN");
         });
 
+        inputISBNBtn.setOnClickListener(view ->{
+            EnterISBNFragment dialog = new EnterISBNFragment();
+            dialog.show(getSupportFragmentManager(), "EnterISBN");
+        });
+
         // Register the image picker for when the image view is pressed.
         registerImagePicker();
 

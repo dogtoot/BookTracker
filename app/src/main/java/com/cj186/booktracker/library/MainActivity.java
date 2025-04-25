@@ -101,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void populateLibrary(){
+        boolean useFavorites = favoriteBtn.getText().toString().equals(getString(R.string.favorites_btn_str));
+        adapter.setFilter(!useFavorites);
         // If the adapter is empty, show a textview saying the library has no books.
         if(adapter.getItemCount() == 0){
             emptyTextView.setVisibility(View.VISIBLE);

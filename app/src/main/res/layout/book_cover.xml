@@ -19,8 +19,15 @@
             android:id="@+id/book_cover_img"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/black"
-            />
+            android:background="@color/black" />
+
+        <ImageView
+            android:id="@+id/favorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/favorite_background"
+            android:src="@drawable/filled_star"
+            android:padding="3dp"/>
 
         <TextView
             android:id="@+id/book_status"

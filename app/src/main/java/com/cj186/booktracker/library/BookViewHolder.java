@@ -14,12 +14,14 @@ import com.cj186.booktracker.R;
 public class BookViewHolder extends RecyclerView.ViewHolder{
     // Cover and status for the library.
     private ImageView cover;
+    private ImageView favorite;
     private TextView status;
 
     public BookViewHolder(@NonNull View itemView) {
         // Call the super constructor and set the views.
         super(itemView);
         cover = itemView.findViewById(R.id.book_cover_img);
+        favorite = itemView.findViewById(R.id.favorite);
         status = itemView.findViewById(R.id.book_status);
     }
 
@@ -27,7 +29,7 @@ public class BookViewHolder extends RecyclerView.ViewHolder{
         // Get the imagebytes and assign it converted to a bitmap to cover.
         byte[] imageBytes = book.getImageBytes();
         cover.setImageBitmap(BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length));
-
+        favorite.setVisibility(book.isFavorite() ? View.VISIBLE : View.INVISIBLE);
         // Set the status text.
         status.setText(book.getStatus().getLabel());
     }
