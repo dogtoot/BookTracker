@@ -1,7 +1,6 @@
 package com.cj186.booktracker.addbook;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,10 +20,10 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.cj186.booktracker.BaseActivity;
+import com.cj186.booktracker.model.BookViewModel;
 import com.cj186.booktracker.network.APIHandler;
 import com.cj186.booktracker.model.Book;
 import com.cj186.booktracker.R;
@@ -60,6 +59,9 @@ public class AddBookActivity extends BaseActivity {
             Status.CURRENTLY_READING.getLabel()
     };
 
+    private Book intermediateBook;
+    private BookViewModel bookViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +73,14 @@ public class AddBookActivity extends BaseActivity {
         // Add a listener to our addbook button.
         addBookBtn.setOnClickListener(view -> addBook());
         cancelBtn.setOnClickListener(view -> finish());
+
+        bookViewModel = new ViewModelProvider(this).get(BookViewModel.class);
+        getSupportFragmentManager().setFragmentResultListener("correct_book_result", this, (requestKey, result) -> {
+            boolean isCorrect = result.getBoolean("isCorrect");
+            if (isCorrect) {
+                fillBookFields(bookViewModel.getIntermediateBook().getValue());
+            }
+        });
 
         scanISBNBtn.setOnClickListener(view -> {
             ScanISBNFragment dialog = new ScanISBNFragment();
@@ -133,30 +143,30 @@ public class AddBookActivity extends BaseActivity {
 
         progressDialog.show();
 
-        new Thread(() -> {
-            Book openLibraryBook = APIHandler.getBookFromISBN(isbn);
-            new Handler(Looper.getMainLooper()).post(() -> {
-                progressDialog.dismiss();
-                if(openLibraryBook != null) {
-                    askUserIfCorrectBook(openLibraryBook);
-                }
-                else{
-                    Toast.makeText(this, "Unable to get book.", Toast.LENGTH_LONG).show();
-                }
-            });
-        }).start();
+        try{
+            new Thread(() -> {
+                intermediateBook = APIHandler.getBookFromISBN(isbn);
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    progressDialog.dismiss();
+                    if(intermediateBook != null) {
+                        bookViewModel.setIntermediateBook(intermediateBook);
+                        askUserIfCorrectBook(intermediateBook);
+                    }
+                    else{
+                        Toast.makeText(this, "Unable to get book.", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }).start();
+        }
+        catch (Exception e){
+            Toast.makeText(this, "Unable to get book.", Toast.LENGTH_LONG).show();
+        }
+
     }
 
     private void askUserIfCorrectBook(Book book){
-        CorrectBookFragment correctBookFragment = new CorrectBookFragment(book);
+        CorrectBookFragment correctBookFragment = new CorrectBookFragment();
         correctBookFragment.show(getSupportFragmentManager(), "isCorrect");
-        getSupportFragmentManager().setFragmentResultListener("correct_book_result", this, (requestKey, result) -> {
-            boolean isCorrect = result.getBoolean("isCorrect");
-            if (isCorrect) {
-                fillBookFields(book);
-            }
-        });
-
     }
 
     private void fillBookFields(Book openLibraryBook){
@@ -196,7 +206,7 @@ public class AddBookActivity extends BaseActivity {
         Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 40, stream);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
         return stream.toByteArray();
     }
 

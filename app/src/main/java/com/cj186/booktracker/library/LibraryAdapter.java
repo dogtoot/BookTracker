@@ -45,7 +45,7 @@ public class LibraryAdapter extends RecyclerView.Adapter<BookViewHolder>{
         holder.itemView.setOnClickListener(v -> {
             // Onclick pass the Book object to BookDescriptionActivity through intent.
             Intent intent = new Intent(ctx, BookDescriptionActivity.class);
-            intent.putExtra("book_obj", book);
+            intent.putExtra("book_obj", book.getId());
             ctx.startActivity(intent);
         });
         // Bind the book.

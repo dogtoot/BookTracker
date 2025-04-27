@@ -1,6 +1,7 @@
 package com.cj186.booktracker.bookdescription;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.cj186.booktracker.BaseActivity;
 import com.cj186.booktracker.R;
+import com.cj186.booktracker.database.DBHelper;
 import com.cj186.booktracker.database.SQLHandler;
 import com.cj186.booktracker.model.Book;
 import com.cj186.booktracker.model.Status;
@@ -44,7 +46,21 @@ public class BookDescriptionActivity extends BaseActivity {
         setContentView(R.layout.activity_book_description);
 
         Intent intent = getIntent();
-        book = intent.getParcelableExtra("book_obj");
+        Cursor dbResult = SQLHandler.getBookById(intent.getIntExtra("book_obj", -1));
+        if (dbResult.moveToFirst()) {
+            int id = dbResult.getInt(dbResult.getColumnIndexOrThrow(DBHelper.getColumnId()));
+            byte[] imageBytes = dbResult.getBlob(dbResult.getColumnIndexOrThrow(DBHelper.getColumnImageBlob()));
+            String title = dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnTitle()));
+            String author = dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnAuthor()));
+            String isbn = dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnIsbn()));
+            String description = dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnDescription()));
+            Status status = Status.fromLabel(dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnStatus())));
+            String yearPublished = dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnYearPublished()));
+            boolean favoriteStatus = dbResult.getInt(dbResult.getColumnIndexOrThrow(DBHelper.getColumnFavoriteStatus())) != 0;
+
+            book = new Book(id, imageBytes, title, author, description, status, yearPublished, isbn, favoriteStatus);
+        }
+        //book = intent.getParcelableExtra("book_obj");
 
         boolean storedFavoriteValue = book != null && book.isFavorite();
 

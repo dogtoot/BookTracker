@@ -15,5 +15,8 @@
         <!-- Custom text color for the dialog's message -->
         <item name="android:textColorPrimary">#000000</item>
     </style>
+    <style name="ToolBarStyle" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="colorControlNormal">#FFFFFF</item>
+    </style>
     <style name="Theme.BookTracker" parent="Base.Theme.BookTracker" />
 </resources>

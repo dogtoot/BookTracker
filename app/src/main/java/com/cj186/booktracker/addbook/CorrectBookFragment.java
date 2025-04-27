@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.cj186.booktracker.model.Book;
 
 import androidx.annotation.NonNull;
@@ -17,22 +18,24 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.cj186.booktracker.R;
+import com.cj186.booktracker.model.BookViewModel;
 
 public class CorrectBookFragment extends DialogFragment {
-    private final Book book;
-
-    public CorrectBookFragment(Book book){
-        this.book = book;
-    }
+    private Book book;
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogCustom);
+        AddBookActivity addBookActivity = (AddBookActivity) requireActivity();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(addBookActivity, R.style.AlertDialogCustom);
         // Get our inflater.
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         // Create our settings view and set it as our builder's view.
         View view = inflater.inflate(R.layout.is_correct_book_fragment, null);
+
+        BookViewModel bookViewModel = new ViewModelProvider(addBookActivity).get(BookViewModel.class);
+        book = bookViewModel.getIntermediateBook().getValue();
 
         Button no = view.findViewById(R.id.no);
         Button yes = view.findViewById(R.id.yes);

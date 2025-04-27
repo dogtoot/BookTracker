@@ -120,7 +120,10 @@ public class ScanISBNFragment extends DialogFragment {
         ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA);
         barcodeView.decodeContinuous(result -> {
             barcodeView.pause();
-            if(result.getText().length() == 13){
+            if((result.getText().length() == 13 &&
+                    (result.getText().startsWith("978") ||
+                    result.getText().startsWith("979"))) ||
+                    result.getText().length() == 10){
                 addBookActivity.populateBook(result.getText());
             }
             else{

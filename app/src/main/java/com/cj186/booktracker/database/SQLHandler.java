@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.cj186.booktracker.model.Status;
+import com.cj186.booktracker.model.Book;
 
 public class SQLHandler {
     private static SQLiteDatabase db;
@@ -59,6 +60,21 @@ public class SQLHandler {
                 null,
                 null,
                 "created_at DESC");
+    }
+
+    public static Cursor getBookById(int id){
+        String selection = "_id = ?";
+        String[] selectionArgs = { String.valueOf(id) };
+
+        return db.query(
+                DBHelper.getTableBooks(),
+                null,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
     }
 
     public static void close(){

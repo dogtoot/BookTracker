@@ -1,6 +1,8 @@
 package com.cj186.booktracker.library;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
@@ -9,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -42,7 +45,11 @@ public class MainActivity extends BaseActivity {
         loadBooks();
 
         adapter = new LibraryAdapter(this, bookList);
-        libraryList.setLayoutManager(new GridLayoutManager(this, 3));
+        libraryList.setLayoutManager(
+                new GridLayoutManager(
+                        this,
+                        getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ? 6 : 3
+                        ));
         libraryList.setAdapter(adapter);
 
         populateLibrary();
@@ -120,17 +127,20 @@ public class MainActivity extends BaseActivity {
     private void swapLibrary(){
         boolean useFavorites = favoriteBtn.getText().toString().equals(getString(R.string.favorites_btn_str));
         favoriteBtn.setText(useFavorites ? R.string.all_books_btn_str : R.string.favorites_btn_str);
-
         adapter.setFilter(useFavorites);
 
-        // If the adapter is empty, show a textview saying the library has no books.
-        if(adapter.getItemCount() == 0){
-            emptyTextView.setVisibility(View.VISIBLE);
-            libraryList.setVisibility(View.GONE);
-        }
-        else{
-            emptyTextView.setVisibility(View.GONE);
-            libraryList.setVisibility(View.VISIBLE);
-        }
+        populateLibrary();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("USE_FAVORITES", favoriteBtn.getText().toString().equals(getString(R.string.favorites_btn_str)));
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle inState){
+        super.onRestoreInstanceState(inState);
+
     }
 }
