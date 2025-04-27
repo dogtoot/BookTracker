@@ -24,6 +24,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.cj186.booktracker.BaseActivity;
 import com.cj186.booktracker.network.APIHandler;
 import com.cj186.booktracker.model.Book;
 import com.cj186.booktracker.R;
@@ -32,7 +33,7 @@ import com.cj186.booktracker.model.Status;
 
 import java.io.ByteArrayOutputStream;
 
-public class AddBookActivity extends AppCompatActivity {
+public class AddBookActivity extends BaseActivity {
     // Image picker
     private ActivityResultLauncher<Intent> imagePickerLauncher;
 

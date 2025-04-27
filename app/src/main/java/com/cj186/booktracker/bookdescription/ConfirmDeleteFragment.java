@@ -20,7 +20,7 @@ public class ConfirmDeleteFragment extends DialogFragment {
         this.listener = listener;
     }
 
-    private String bookName;
+    private final String bookName;
     public ConfirmDeleteFragment(String bookName){
         this.bookName = bookName;
     }

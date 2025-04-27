@@ -22,6 +22,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.cj186.booktracker.BaseActivity;
 import com.cj186.booktracker.R;
 import com.cj186.booktracker.database.SQLHandler;
 import com.cj186.booktracker.model.Book;
@@ -33,7 +34,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class BookDescriptionActivity extends AppCompatActivity {
+public class BookDescriptionActivity extends BaseActivity {
 
     private Book book;
 
