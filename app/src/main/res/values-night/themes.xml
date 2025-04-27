@@ -1,12 +1,21 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.BookTracker" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="colorPrimary">#2E2E2E</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="backgroundColor">#494949</item>
     </style>
     <style name="AlertDialogCustom" parent="Theme.AppCompat.Dialog.Alert">
         <item name="android:windowMinWidthMajor">90%</item>
         <item name="android:windowMinWidthMinor">90%</item>
-        <item name="colorPrimary">#386994</item>
+        <item name="android:colorPrimary">#2E2E2E</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:background">#494949</item>
+    </style>
+    <style name="CustomDefaultConfirmationDialog" parent="Theme.AppCompat.Dialog.Alert">
+        <!-- Custom background color for the dialog -->
+        <item name="android:background">#494949</item>
+        <!-- Custom text color for the dialog's message -->
+        <item name="android:textColorPrimary">#FFFFFF</item>
     </style>
 </resources>

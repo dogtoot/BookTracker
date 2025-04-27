@@ -1,5 +1,7 @@
 package com.cj186.booktracker.addbook;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -50,7 +52,12 @@ public class AddBookActivity extends AppCompatActivity {
     private Button scanISBNBtn;
     private Button inputISBNBtn;
 
-    private final String[] items = {Status.COMPLETED.getLabel(), Status.REREADING.getLabel(), Status.PLANNING_TO_READ.getLabel(), Status.CURRENTLY_READING.getLabel()};
+    private final String[] items = {
+            Status.COMPLETED.getLabel(),
+            Status.REREADING.getLabel(),
+            Status.PLANNING_TO_READ.getLabel(),
+            Status.CURRENTLY_READING.getLabel()
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +90,8 @@ public class AddBookActivity extends AppCompatActivity {
     }
 
     private void addBook(){
+        if(validateFields())
+            return;
         // Insert a book using the values we got from the user.
         SQLHandler.insertBook(
                 imageViewToByteArray(cover),
@@ -98,10 +107,35 @@ public class AddBookActivity extends AppCompatActivity {
         finish();
     }
 
+    private boolean validateFields(){
+        boolean errorRaised = false;
+        if(bookTitle.getText().length() < 2){
+            bookTitle.setError("Book Title is a required field.");
+            errorRaised = true;
+        }
+        if(bookAuthor.getText().length() < 2){
+            bookAuthor.setError("Author is a required field.");
+            errorRaised = true;
+        }
+        if(cover.getDrawable() == null){
+            Toast.makeText(this, "Unable to add book, no cover provided.", Toast.LENGTH_LONG).show();
+            errorRaised = true;
+        }
+        return errorRaised;
+    }
+
     protected void populateBook(String isbn){
+        AlertDialog progressDialog = new AlertDialog.Builder(this)
+                .setMessage("Loading book, please wait...")
+                .setCancelable(false)
+                .create();
+
+        progressDialog.show();
+
         new Thread(() -> {
             Book openLibraryBook = APIHandler.getBookFromISBN(isbn);
             new Handler(Looper.getMainLooper()).post(() -> {
+                progressDialog.dismiss();
                 if(openLibraryBook != null) {
                     askUserIfCorrectBook(openLibraryBook);
                 }

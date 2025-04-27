@@ -7,12 +7,9 @@
     android:layout_height="match_parent"
     tools:context=".bookdescription.BookDescriptionActivity">
 
-    <androidx.appcompat.widget.Toolbar
+    <include
+        layout="@layout/toolbar"
         android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/statusBarColor"
-        android:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -157,14 +154,16 @@
         android:id="@+id/remove_book_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@null"
+        android:background="@drawable/soft_background"
         android:src="@drawable/remove_book"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.049"
         app:layout_constraintStart_toStartOf="@+id/toolbar"
         app:layout_constraintTop_toTopOf="@+id/toolbar"
-        app:layout_constraintVertical_bias="0.675" />
+        app:layout_constraintVertical_bias="0.675"
+        android:padding="3dp"
+        android:gravity="center"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

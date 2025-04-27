@@ -2,13 +2,18 @@ package com.cj186.booktracker.addbook;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -29,6 +34,12 @@ import android.widget.Toast;
 public class ScanISBNFragment extends DialogFragment {
     private CompoundBarcodeView barcodeView;
 
+    private final ActivityResultLauncher<Intent> LAUNCH_SETTINGS = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), isGranted -> {
+        if (ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            startScanning();
+        }
+    });
+
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -42,23 +53,54 @@ public class ScanISBNFragment extends DialogFragment {
         barcodeView = view.findViewById(R.id.isbn_scanner);
 
         // Check if permission is granted
-        if (ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            startScanning();
-        }
-        else {
-            ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, 1);
-            if(ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
-                startScanning();
-            }
-            else{
-                Toast.makeText(requireActivity(), "Permissions to use camera have been denied.", Toast.LENGTH_LONG).show();
-                dismiss();
-            }
-        }
+        checkCameraPermissionsAndLaunchScan();
 
         Button cancelBtn = view.findViewById(R.id.cancel_btn);
         cancelBtn.setOnClickListener(v -> dismiss());
         return builder.create();
+    }
+
+    private void checkCameraPermissionsAndLaunchScan(){
+        if (ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            startScanning();
+        }
+        else{
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    startScanning();
+                }
+                else if(ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), Manifest.permission.CAMERA)){
+                    Toast.makeText(requireActivity(), "Permissions to use camera have been denied.", Toast.LENGTH_LONG).show();
+                    dismiss();
+                }
+                else{
+                    showGoToSettingsDialog();
+                }
+            }).launch(Manifest.permission.CAMERA);
+        }
+    }
+
+    private void showGoToSettingsDialog() {
+        new AlertDialog.Builder(requireActivity(), R.style.CustomDefaultConfirmationDialog)
+                .setTitle("Camera Permission Needed")
+                .setMessage("Camera permission has been permanently denied. Please go to Settings to allow access.")
+                .setPositiveButton("Go to Settings", (dialog, which) -> {
+                    openAppSettings();
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> {
+                    dialog.dismiss();
+                    dismiss();
+                })
+                .create()
+                .show();
+    }
+
+    private void openAppSettings() {
+        AddBookActivity addBookActivity = (AddBookActivity) requireActivity();
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", addBookActivity.getPackageName(), null);
+        intent.setData(uri);
+        LAUNCH_SETTINGS.launch(intent);
     }
 
     private void startScanning(){
@@ -73,8 +115,7 @@ public class ScanISBNFragment extends DialogFragment {
             }
             return true;
         });
-        barcodeView.getBarcodeView().setDecoderFactory(
-                new DefaultDecoderFactory(Collections.singleton(BarcodeFormat.EAN_13)));
+        barcodeView.getBarcodeView().setDecoderFactory(new DefaultDecoderFactory(Collections.singleton(BarcodeFormat.EAN_13)));
         barcodeView.setStatusText("Scan an ISBN barcode.");
         ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA);
         barcodeView.decodeContinuous(result -> {

@@ -7,8 +7,13 @@
     <style name="AlertDialogCustom" parent="Theme.AppCompat.Dialog.Alert">
         <item name="android:windowMinWidthMajor">90%</item>
         <item name="android:windowMinWidthMinor">90%</item>
-        <item name="colorPrimary">#386994</item>
+        <item name="android:colorPrimary">#386994</item>
     </style>
-
+    <style name="CustomDefaultConfirmationDialog" parent="Theme.AppCompat.Dialog.Alert">
+        <!-- Custom background color for the dialog -->
+        <item name="android:background">#FFFFFF</item>
+        <!-- Custom text color for the dialog's message -->
+        <item name="android:textColorPrimary">#000000</item>
+    </style>
     <style name="Theme.BookTracker" parent="Base.Theme.BookTracker" />
 </resources>

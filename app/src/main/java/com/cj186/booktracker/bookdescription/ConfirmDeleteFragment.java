@@ -8,6 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.cj186.booktracker.R;
+
 public class ConfirmDeleteFragment extends DialogFragment {
     public interface ConfirmationListener{
         void onConfirmed(boolean result);
@@ -26,7 +28,7 @@ public class ConfirmDeleteFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        return new AlertDialog.Builder(requireContext())
+        return new AlertDialog.Builder(requireContext(), R.style.CustomDefaultConfirmationDialog)
                 .setTitle("Confirm Book Deletion")
                 .setMessage("Are you sure you want to remove " + bookName)
                 .setPositiveButton("Yes", (dialog, which) -> {
