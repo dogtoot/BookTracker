@@ -91,17 +91,7 @@ public class MainActivity extends BaseActivity {
         // Loop through all rows, and add them as a book to bookList.
         if (cursor.moveToFirst()) {
             do {
-                int id = cursor.getInt(cursor.getColumnIndexOrThrow(DBHelper.getColumnId()));
-                byte[] imageBytes = cursor.getBlob(cursor.getColumnIndexOrThrow(DBHelper.getColumnImageBlob()));
-                String title = cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.getColumnTitle()));
-                String author = cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.getColumnAuthor()));
-                String isbn = cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.getColumnIsbn()));
-                String description = cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.getColumnDescription()));
-                Status status = Status.fromLabel(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.getColumnStatus())));
-                String yearPublished = cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.getColumnYearPublished()));
-                boolean favoriteStatus = cursor.getInt(cursor.getColumnIndexOrThrow(DBHelper.getColumnFavoriteStatus())) != 0;
-
-                Book book = new Book(id, imageBytes, title, author, description, status, yearPublished, isbn, favoriteStatus);
+                Book book = new Book(cursor);
                 bookList.add(book);
             }
             while (cursor.moveToNext());

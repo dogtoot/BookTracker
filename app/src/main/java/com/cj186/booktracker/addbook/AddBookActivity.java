@@ -52,7 +52,7 @@ public class AddBookActivity extends BaseActivity {
     private Button scanISBNBtn;
     private Button inputISBNBtn;
 
-    private final String[] items = {
+    private final String[] spinnerItems = {
             Status.COMPLETED.getLabel(),
             Status.REREADING.getLabel(),
             Status.PLANNING_TO_READ.getLabel(),
@@ -82,6 +82,16 @@ public class AddBookActivity extends BaseActivity {
             }
         });
 
+        if(bookViewModel.getIntermediateBook().getValue() != null){
+            Book currentBook = bookViewModel.getIntermediateBook().getValue();
+            new Thread(() -> {
+                Bitmap bitmap = BitmapFactory.decodeByteArray(currentBook.getImageBytes(), 0, currentBook.getImageBytes().length);
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    cover.setImageBitmap(bitmap);
+                });
+            }).start();
+        }
+
         scanISBNBtn.setOnClickListener(view -> {
             ScanISBNFragment dialog = new ScanISBNFragment();
             dialog.show(getSupportFragmentManager(), "ScanISBN");
@@ -96,7 +106,7 @@ public class AddBookActivity extends BaseActivity {
         registerImagePicker();
 
         // Add our statuses to our dropdown menu.
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, spinnerItems);
         statusDropDown.setAdapter(adapter);
     }
 
@@ -171,8 +181,8 @@ public class AddBookActivity extends BaseActivity {
 
     private void fillBookFields(Book openLibraryBook){
         int indexOfStatus = 0;
-        for(int i = 0; i < items.length; i++){
-            if(items[i].equals(openLibraryBook.getStatus().getLabel())){
+        for(int i = 0; i < spinnerItems.length; i++){
+            if(spinnerItems[i].equals(openLibraryBook.getStatus().getLabel())){
                 indexOfStatus = i;
                 break;
             }

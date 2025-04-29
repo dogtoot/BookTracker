@@ -1,11 +1,10 @@
 package com.cj186.booktracker.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.database.Cursor;
 
-import androidx.annotation.NonNull;
+import com.cj186.booktracker.database.DBHelper;
 
-public class Book implements Parcelable {
+public class Book {
     // Fields for a book.
     private int id;
     private byte[] imageBytes;
@@ -42,32 +41,19 @@ public class Book implements Parcelable {
         this.favoriteStatus = favoriteStatus;
     }
 
-    protected Book(Parcel in) {
-        // Create a book from a parcel.
-        id = in.readInt();
-        imageBytes = new byte[in.readInt()];
-        in.readByteArray(imageBytes);
-        status = Status.fromLabel(in.readString());
-        title = in.readString();
-        author = in.readString();
-        description = in.readString();
-        yearPublished = in.readString();
-        ISBN = in.readString();
-        favoriteStatus = in.readByte() != 0;
+    public Book(Cursor dbResult){
+        if (dbResult.moveToFirst()) {
+            this.id = dbResult.getInt(dbResult.getColumnIndexOrThrow(DBHelper.getColumnId()));
+            this.imageBytes = dbResult.getBlob(dbResult.getColumnIndexOrThrow(DBHelper.getColumnImageBlob()));
+            this.title = dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnTitle()));
+            this.author = dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnAuthor()));
+            this.ISBN = dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnIsbn()));
+            this.description = dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnDescription()));
+            this.status = Status.fromLabel(dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnStatus())));
+            this.yearPublished = dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnYearPublished()));
+            this.favoriteStatus = dbResult.getInt(dbResult.getColumnIndexOrThrow(DBHelper.getColumnFavoriteStatus())) != 0;
+        }
     }
-
-    // Default Creator for a parcelable.
-    public static final Creator<Book> CREATOR = new Creator<Book>() {
-        @Override
-        public Book createFromParcel(Parcel in) {
-            return new Book(in);
-        }
-
-        @Override
-        public Book[] newArray(int size) {
-            return new Book[size];
-        }
-    };
 
     // Getter and setter for favorite.
     public boolean isFavorite() {
@@ -110,32 +96,5 @@ public class Book implements Parcelable {
 
     public String getISBN() {
         return ISBN;
-    }
-
-    public void setISBN(String ISBN) {
-        this.ISBN = ISBN;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(@NonNull Parcel dest, int flags) {
-        dest.writeInt(id);
-        // Write the length of imageBytes to the parcel, for later reading.
-        dest.writeInt(imageBytes.length);
-        // Write all fields.
-        dest.writeByteArray(imageBytes);
-        dest.writeString(status.getLabel());
-        dest.writeString(title);
-        dest.writeString(author);
-        dest.writeString(description);
-        dest.writeString(yearPublished);
-        dest.writeString(ISBN);
-
-        // Write our boolean favorite status as a byte, either 1 or 0.
-        dest.writeByte((byte) (favoriteStatus ? 1 : 0));
     }
 }

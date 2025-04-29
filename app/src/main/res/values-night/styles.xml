@@ -3,4 +3,7 @@
     <style name="ToolbarOverflowStyle">
         <item name="colorControlNormal">#FFFFFF</item>
     </style>
+    <style name="StatusSpinner">
+        <item name="backgroundTint">#FFFFFF</item>
+    </style>
 </resources>

@@ -3,16 +3,7 @@ package com.cj186.booktracker.bookdescription;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.text.Html;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
-import android.util.Log;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -20,21 +11,13 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.cj186.booktracker.BaseActivity;
 import com.cj186.booktracker.R;
 import com.cj186.booktracker.database.DBHelper;
 import com.cj186.booktracker.database.SQLHandler;
 import com.cj186.booktracker.model.Book;
 import com.cj186.booktracker.model.Status;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.cj186.booktracker.utils.MediaHandler;
 
 public class BookDescriptionActivity extends BaseActivity {
 
@@ -47,22 +30,8 @@ public class BookDescriptionActivity extends BaseActivity {
 
         Intent intent = getIntent();
         Cursor dbResult = SQLHandler.getBookById(intent.getIntExtra("book_obj", -1));
-        if (dbResult.moveToFirst()) {
-            int id = dbResult.getInt(dbResult.getColumnIndexOrThrow(DBHelper.getColumnId()));
-            byte[] imageBytes = dbResult.getBlob(dbResult.getColumnIndexOrThrow(DBHelper.getColumnImageBlob()));
-            String title = dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnTitle()));
-            String author = dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnAuthor()));
-            String isbn = dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnIsbn()));
-            String description = dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnDescription()));
-            Status status = Status.fromLabel(dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnStatus())));
-            String yearPublished = dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnYearPublished()));
-            boolean favoriteStatus = dbResult.getInt(dbResult.getColumnIndexOrThrow(DBHelper.getColumnFavoriteStatus())) != 0;
-
-            book = new Book(id, imageBytes, title, author, description, status, yearPublished, isbn, favoriteStatus);
-        }
-        //book = intent.getParcelableExtra("book_obj");
-
-        boolean storedFavoriteValue = book != null && book.isFavorite();
+        book = new Book(dbResult);
+        boolean storedFavoriteValue = book.isFavorite();
 
         ImageView cover = findViewById(R.id.book_cover);
         TextView title = findViewById(R.id.title);
@@ -114,6 +83,7 @@ public class BookDescriptionActivity extends BaseActivity {
 
         favoriteBtn.setOnClickListener(i ->{
             book.setFavoriteStatus(!book.isFavorite());
+            MediaHandler.playSfx(this, R.raw.pop);
             if(book.isFavorite())
                 favoriteBtn.setImageResource(R.drawable.filled_star);
             else

@@ -5,8 +5,6 @@
     </style>
 
     <style name="AlertDialogCustom" parent="Theme.AppCompat.Dialog.Alert">
-        <item name="android:windowMinWidthMajor">90%</item>
-        <item name="android:windowMinWidthMinor">90%</item>
         <item name="android:colorPrimary">#386994</item>
     </style>
     <style name="CustomDefaultConfirmationDialog" parent="Theme.AppCompat.Dialog.Alert">

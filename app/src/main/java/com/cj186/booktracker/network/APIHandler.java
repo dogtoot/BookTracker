@@ -17,10 +17,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
@@ -257,8 +254,6 @@ public class APIHandler {
 
         JSONArray bookArray = responseJson.getJSONArray("items");
         JSONObject bookObject = bookArray.getJSONObject(0).getJSONObject("volumeInfo");
-
-        //String imageUrl = bookObject.getJSONObject("imageLinks").getString("thumbnail").replace("http", "https");
         String imageUrl = bookObject.getJSONObject("imageLinks").optString("extraLarge",
                 bookObject.getJSONObject("imageLinks").optString("large",
                 bookObject.getJSONObject("imageLinks").optString("medium",
@@ -306,7 +301,42 @@ public class APIHandler {
         JSONObject works = workIDObject.getJSONObject(0);
         String workID = works.getString("key");
 
-        responseJson = new JSONObject(getAPIResponseFromURL(parentUrl + workID + "/editions.json?limit=100"));
+        ArrayList<JSONObject> editionObjects = getOpenLibraryEditions(workID, parentUrl);
+
+        if(editionObjects.isEmpty())
+            editionObjects.add(new JSONObject(getAPIResponseFromURL(parentUrl + workID + ".json")));
+
+        JSONObject book = editionObjects.get(0);
+
+        String title = book.getString("title");
+        String cover = book.getJSONArray("covers").get(0).toString();
+
+        JSONArray authorBlock = book.getJSONArray("authors");
+        JSONObject authorPluralObject = authorBlock.getJSONObject(0);
+        JSONObject authorObject = authorPluralObject.getJSONObject("author");
+        String authorID = authorObject.getString("key");
+
+        JSONObject authorResponse = new JSONObject(getAPIResponseFromURL( parentUrl + authorID + ".json"));
+        String author = authorResponse.getString("name");
+
+        String description = "";
+        if(book.toString().contains("description")){
+            try{
+                JSONObject descriptionArray = book.getJSONObject("description");
+                description = descriptionArray.getString("value");
+            }
+            catch (Exception ignored){
+                description = book.getString("description");
+            }
+        }
+        Status status = Status.PLANNING_TO_READ;
+        byte[] imageBytes = getImageFromUrl("https://covers.openlibrary.org/b/id/" + cover + "-L.jpg");
+
+        return new Book(imageBytes, title, author, description, status, publishYear, ISBN, false);
+    }
+
+    private static ArrayList<JSONObject> getOpenLibraryEditions(String workID, String parentUrl) throws JSONException{
+        JSONObject responseJson = new JSONObject(getAPIResponseFromURL(parentUrl + workID + "/editions.json?limit=100"));
         JSONArray editions = responseJson.getJSONArray("entries");
 
         ArrayList<JSONObject> editionObjects = new ArrayList<>();
@@ -331,7 +361,7 @@ public class APIHandler {
                         if(languageKey.equals("/languages/eng")){
                             for(int k = 0; k < publishers.length(); k++){
                                 String publisher = publishers.getString(k);
-                                if(isTrustedPublished(publisher)){
+                                if(isTrustedPublisher(publisher)){
                                     editionObjects.add(edition);
                                 }
                             }
@@ -342,10 +372,6 @@ public class APIHandler {
             catch(Exception ignored){}
         }
 
-        JSONObject fallBackEdition = new JSONObject(getAPIResponseFromURL(parentUrl + workID + ".json"));
-        if(editionObjects.isEmpty())
-            editionObjects.add(fallBackEdition);
-
         editionObjects.sort((o1, o2) -> {
             try{
                 return o1.getString("publish_date").compareTo(o2.getString("publish_date"));
@@ -354,34 +380,10 @@ public class APIHandler {
             return 0;
         });
 
-        String title = editionObjects.get(0).getString("title");
-        String cover = editionObjects.get(0).getJSONArray("covers").get(0).toString();
-
-        JSONArray authorBlock = fallBackEdition.getJSONArray("authors");
-        JSONObject authorPluralObject = authorBlock.getJSONObject(0);
-        JSONObject authorObject = authorPluralObject.getJSONObject("author");
-        String authorID = authorObject.getString("key");
-
-        JSONObject authorResponse = new JSONObject(getAPIResponseFromURL( parentUrl + authorID + ".json"));
-        String author = authorResponse.getString("name");
-
-        String description = "";
-        if(editionObjects.get(0).toString().contains("description")){
-            try{
-                JSONObject descriptionArray = editionObjects.get(0).getJSONObject("description");
-                description = descriptionArray.getString("value");
-            }
-            catch (Exception ignored){
-                description = editionObjects.get(0).getString("description");
-            }
-        }
-        Status status = Status.PLANNING_TO_READ;
-        byte[] imageBytes = getImageFromUrl("https://covers.openlibrary.org/b/id/" + cover + "-L.jpg");
-
-        return new Book(imageBytes, title, author, description, status, publishYear, ISBN, false);
+        return editionObjects;
     }
 
-    public static boolean isTrustedPublished(String inputPublisher){
+    public static boolean isTrustedPublisher(String inputPublisher){
         String normalizedInput = normalizeString(inputPublisher);
         for(String trustedPublisher : TRUSTED_PUBLISHERS){
             String normalizedTrusted = normalizeString(inputPublisher);

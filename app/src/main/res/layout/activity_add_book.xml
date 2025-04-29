@@ -207,7 +207,8 @@
         app:layout_constraintTop_toBottomOf="@+id/isbn_btn_bar"
         app:layout_constraintVertical_bias="0.231"
         app:layout_constraintWidth_percent=".5"
-        android:background="@drawable/dropdown"/>
+        android:background="@drawable/dropdown"
+        style="@style/StatusSpinner"/>
 
     <EditText
         android:id="@+id/book_description"

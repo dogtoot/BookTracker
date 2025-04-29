@@ -107,7 +107,7 @@ public class ScanISBNFragment extends DialogFragment {
         AddBookActivity addBookActivity = (AddBookActivity) requireActivity();
         CameraSettings settings = new CameraSettings();
         settings.setAutoFocusEnabled(true);
-        settings.setFocusMode(CameraSettings.FocusMode.AUTO);
+        settings.setFocusMode(CameraSettings.FocusMode.CONTINUOUS);
         barcodeView.setCameraSettings(settings);
         barcodeView.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {

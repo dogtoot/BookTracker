@@ -1,0 +1,17 @@
+package com.cj186.booktracker.utils;
+
+import android.content.Context;
+import android.media.MediaPlayer;
+
+public class MediaHandler {
+    public static void playSfx(Context ctx, int sfx){
+        // Create a media player with a random file from selectFile.
+        MediaPlayer mediaPlayer =  MediaPlayer.create(ctx, sfx);
+        if(!mediaPlayer.isPlaying()){
+            // Release after playback finishes
+            mediaPlayer.setOnCompletionListener(MediaPlayer::release);
+            // Play the media player if it is not already playing.
+            mediaPlayer.start();
+        }
+    }
+}
