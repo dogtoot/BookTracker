@@ -42,17 +42,15 @@ public class Book {
     }
 
     public Book(Cursor dbResult){
-        if (dbResult.moveToFirst()) {
-            this.id = dbResult.getInt(dbResult.getColumnIndexOrThrow(DBHelper.getColumnId()));
-            this.imageBytes = dbResult.getBlob(dbResult.getColumnIndexOrThrow(DBHelper.getColumnImageBlob()));
-            this.title = dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnTitle()));
-            this.author = dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnAuthor()));
-            this.ISBN = dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnIsbn()));
-            this.description = dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnDescription()));
-            this.status = Status.fromLabel(dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnStatus())));
-            this.yearPublished = dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnYearPublished()));
-            this.favoriteStatus = dbResult.getInt(dbResult.getColumnIndexOrThrow(DBHelper.getColumnFavoriteStatus())) != 0;
-        }
+        this.id = dbResult.getInt(dbResult.getColumnIndexOrThrow(DBHelper.getColumnId()));
+        this.imageBytes = dbResult.getBlob(dbResult.getColumnIndexOrThrow(DBHelper.getColumnImageBlob()));
+        this.title = dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnTitle()));
+        this.author = dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnAuthor()));
+        this.ISBN = dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnIsbn()));
+        this.description = dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnDescription()));
+        this.status = Status.fromLabel(dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnStatus())));
+        this.yearPublished = dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnYearPublished()));
+        this.favoriteStatus = dbResult.getInt(dbResult.getColumnIndexOrThrow(DBHelper.getColumnFavoriteStatus())) != 0;
     }
 
     // Getter and setter for favorite.

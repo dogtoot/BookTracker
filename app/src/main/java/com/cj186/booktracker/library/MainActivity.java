@@ -1,30 +1,42 @@
 package com.cj186.booktracker.library;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cj186.booktracker.BaseActivity;
 import com.cj186.booktracker.model.Book;
-import com.cj186.booktracker.database.DBHelper;
 import com.cj186.booktracker.R;
 import com.cj186.booktracker.database.SQLHandler;
-import com.cj186.booktracker.model.Status;
 import com.cj186.booktracker.addbook.AddBookActivity;
 
 import java.util.ArrayList;
+
+/**
+ * Welcome to BookTracker, this is the first activity shown when the app is run.
+ * It is the library where users can see all of their books.
+ * <pre>
+ *        .--.                   .---.
+ *    .---|__|           .-.     |~~~|
+ * .--|===|--|_          |_|     |~~~|--.
+ * |  |===|  |'\     .---!~|  .--|   |--|
+ * |%%|   |  |.'\    |===| |--|%%|   |  |
+ * |%%|   |  |\.'\   |   | |__|  |   |  |
+ * |  |   |  | \  \  |===| |==|  |   |  |
+ * |  |   |__|  \.'\ |   |_|__|  |~~~|__|
+ * |  |===|--|   \.'\|===|~|--|%%|~~~|--|
+ * ^--^---'--^    `-'`---^-^--^--^---'--' hjw
+ * <a href="https://www.asciiart.eu/books/books">ASCII Art Source</a>
+ * </pre>
+ */
 
 public class MainActivity extends BaseActivity {
 

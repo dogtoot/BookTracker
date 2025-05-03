@@ -2,6 +2,7 @@ package com.cj186.booktracker.addbook;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -65,7 +66,11 @@ public class AddBookActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_book);
+
+        if(getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE)
+            setContentView(R.layout.activity_add_book);
+        else
+            setContentView(R.layout.activity_add_book_landscape);
 
         // Populate our views.
         populateViews();
@@ -155,7 +160,7 @@ public class AddBookActivity extends BaseActivity {
 
         try{
             new Thread(() -> {
-                intermediateBook = APIHandler.getBookFromISBN(isbn);
+                intermediateBook = APIHandler.getBookFromISBN(isbn, "en");
                 new Handler(Looper.getMainLooper()).post(() -> {
                     progressDialog.dismiss();
                     if(intermediateBook != null) {

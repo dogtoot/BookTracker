@@ -1,6 +1,7 @@
 package com.cj186.booktracker.bookdescription;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -26,11 +27,15 @@ public class BookDescriptionActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_book_description);
+        if(getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE)
+            setContentView(R.layout.activity_book_description);
+        else
+            setContentView(R.layout.activity_book_description_landscape);
 
         Intent intent = getIntent();
         Cursor dbResult = SQLHandler.getBookById(intent.getIntExtra("book_obj", -1));
-        book = new Book(dbResult);
+        if(dbResult.moveToFirst())
+            book = new Book(dbResult);
         boolean storedFavoriteValue = book.isFavorite();
 
         ImageView cover = findViewById(R.id.book_cover);
@@ -50,7 +55,7 @@ public class BookDescriptionActivity extends BaseActivity {
         cover.setImageBitmap(BitmapFactory.decodeByteArray(book.getImageBytes(), 0,book.getImageBytes().length));
         title.setText(book.getTitle());
         author.setText(book.getAuthor());
-        isbn.setText((!book.getISBN().isEmpty()) ? book.getISBN() : "No ISBN Provided.");
+        isbn.setText((!book.getISBN().isEmpty()) ? getString(R.string.isbn_s, book.getISBN()) : "No ISBN Provided.");
         publishYear.setText(getString(R.string.publish_year_s, (!book.getYearPublished().isEmpty()) ? book.getYearPublished() : "N/A"));
         description.setText((!book.getDescription().isEmpty()) ? book.getDescription() : "");
 
