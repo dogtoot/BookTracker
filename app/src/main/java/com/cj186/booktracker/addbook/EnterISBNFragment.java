@@ -22,25 +22,33 @@ public class EnterISBNFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogCustom);
         // Get our inflater.
         LayoutInflater inflater = requireActivity().getLayoutInflater();
-        // Create our settings view and set it as our builder's view.
+        // Create our isbn fragment view and set it as our builder's view.
         View view = inflater.inflate(R.layout.manual_enter_fragment, null);
         builder.setView(view);
 
+        // Populate our add and cancel buttons.
         Button add = view.findViewById(R.id.add);
         Button cancel = view.findViewById(R.id.cancel);
 
+        // Populate our ISBN field.
         EditText isbnField = view.findViewById(R.id.isbn);
-
+        // Set our addBookActivity.
         AddBookActivity addBookActivity = (AddBookActivity) requireActivity();
 
+        // On click listener for cancel just dismisses the dialog.
         cancel.setOnClickListener(i -> dismiss());
+
         add.setOnClickListener(i ->{
             if(isbnField.getText().length() == 13 || isbnField.getText().length() == 10){
+                // If the ISBN is 10 or 13 characters long,
+                // we call populateBook with the ISBN field's text.
+                // Then we dismiss the dialog.
                 addBookActivity.populateBook(String.valueOf(isbnField.getText()));
                 dismiss();
             }
             else{
-                Toast.makeText(addBookActivity, "Please enter a valid IBSN-10 or ISBN-13 code.", Toast.LENGTH_LONG).show();
+                // If the ISBN is not the correct length, we show the user an error.
+                Toast.makeText(addBookActivity, "Please enter a valid ISBN-10 or ISBN-13 code.", Toast.LENGTH_LONG).show();
             }
         });
 

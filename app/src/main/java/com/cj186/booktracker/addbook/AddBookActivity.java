@@ -67,6 +67,7 @@ public class AddBookActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Set the content view based up orientation.
         if(getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE)
             setContentView(R.layout.activity_add_book);
         else
@@ -79,8 +80,10 @@ public class AddBookActivity extends BaseActivity {
         addBookBtn.setOnClickListener(view -> addBook());
         cancelBtn.setOnClickListener(view -> finish());
 
+        // Get the bookViewModel.
         bookViewModel = new ViewModelProvider(this).get(BookViewModel.class);
         getSupportFragmentManager().setFragmentResultListener("correct_book_result", this, (requestKey, result) -> {
+            // Populate fields if the book is correct, using bookViewModel.
             boolean isCorrect = result.getBoolean("isCorrect");
             if (isCorrect) {
                 fillBookFields(bookViewModel.getIntermediateBook().getValue());
@@ -89,6 +92,7 @@ public class AddBookActivity extends BaseActivity {
 
         if(bookViewModel.getIntermediateBook().getValue() != null){
             Book currentBook = bookViewModel.getIntermediateBook().getValue();
+            // Set the book's cover using a new thread to prevent the main thread from being held up during decoding.
             new Thread(() -> {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(currentBook.getImageBytes(), 0, currentBook.getImageBytes().length);
                 new Handler(Looper.getMainLooper()).post(() -> {
@@ -98,11 +102,13 @@ public class AddBookActivity extends BaseActivity {
         }
 
         scanISBNBtn.setOnClickListener(view -> {
+            // Open the scan fragment.
             ScanISBNFragment dialog = new ScanISBNFragment();
             dialog.show(getSupportFragmentManager(), "ScanISBN");
         });
 
         inputISBNBtn.setOnClickListener(view ->{
+            // Open the manual input fragment.
             EnterISBNFragment dialog = new EnterISBNFragment();
             dialog.show(getSupportFragmentManager(), "EnterISBN");
         });
@@ -116,6 +122,7 @@ public class AddBookActivity extends BaseActivity {
     }
 
     private void addBook(){
+        // Make sure required fields are filled.
         if(validateFields())
             return;
         // Insert a book using the values we got from the user.
@@ -134,6 +141,7 @@ public class AddBookActivity extends BaseActivity {
     }
 
     private boolean validateFields(){
+        // Make sure all required fields are filled, if not, return the true and show errors.
         boolean errorRaised = false;
         if(bookTitle.getText().length() < 2){
             bookTitle.setError("Book Title is a required field.");
@@ -151,6 +159,7 @@ public class AddBookActivity extends BaseActivity {
     }
 
     protected void populateBook(String isbn){
+        // Open a dialog to show that something is happening.
         AlertDialog progressDialog = new AlertDialog.Builder(this)
                 .setMessage("Loading book, please wait...")
                 .setCancelable(false)
@@ -159,32 +168,42 @@ public class AddBookActivity extends BaseActivity {
         progressDialog.show();
 
         try{
+            // Start a new thread because android doesn't
+            // allow network operations on the main thread.
             new Thread(() -> {
-                intermediateBook = APIHandler.getBookFromISBN(isbn, "en");
+                // Get our intermediate book from APIHandler.
+                intermediateBook = APIHandler.getBookFromISBN(isbn);
+                // Create a new handler.
                 new Handler(Looper.getMainLooper()).post(() -> {
+                    // Close our loading screen.
                     progressDialog.dismiss();
                     if(intermediateBook != null) {
+                        // If we have a book, bookViewModel's intermediate book to intermediateBook.
                         bookViewModel.setIntermediateBook(intermediateBook);
-                        askUserIfCorrectBook(intermediateBook);
+                        // Finally we ask the user if intermediateBook is the correct book.
+                        askUserIfCorrectBook();
                     }
                     else{
+                        // If we can't get the book, we show an error.
                         Toast.makeText(this, "Unable to get book.", Toast.LENGTH_LONG).show();
                     }
                 });
             }).start();
         }
         catch (Exception e){
+            // If an error is thrown, we show an error.
             Toast.makeText(this, "Unable to get book.", Toast.LENGTH_LONG).show();
         }
-
     }
 
-    private void askUserIfCorrectBook(Book book){
+    private void askUserIfCorrectBook(){
+        // Create a new correctBookFragment and show it.
         CorrectBookFragment correctBookFragment = new CorrectBookFragment();
         correctBookFragment.show(getSupportFragmentManager(), "isCorrect");
     }
 
     private void fillBookFields(Book openLibraryBook){
+        // Populate all fields in add book.
         int indexOfStatus = 0;
         for(int i = 0; i < spinnerItems.length; i++){
             if(spinnerItems[i].equals(openLibraryBook.getStatus().getLabel())){
@@ -201,7 +220,10 @@ public class AddBookActivity extends BaseActivity {
         favoriteStatus.setChecked(openLibraryBook.isFavorite());
         byte[] imageBytes = openLibraryBook.getImageBytes();
         if (imageBytes != null && imageBytes.length > 0) {
+            // If we do not create a new thread,
+            // things can get very laggy when attempting to decode the bitmap.
             new Thread(() -> {
+                // Decode imageBytes and set cover to the bitmap returned.
                 Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
                 new Handler(Looper.getMainLooper()).post(() -> {
                     cover.setImageBitmap(bitmap);
@@ -211,17 +233,17 @@ public class AddBookActivity extends BaseActivity {
     }
 
     private static byte[] imageViewToByteArray(ImageView view){
-        // Convert the image view to a byte array at
-        // 40% quality to ensure it can be passed through intents.
+        // Get the image as a drawable.
         Drawable drawable = view.getDrawable();
-
         if(drawable == null)
             return new byte[0];
 
+        // Turn the drawable into a bitmap.
         Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
 
+        // Compress the bitmap into a byte array.
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
         return stream.toByteArray();
     }
 

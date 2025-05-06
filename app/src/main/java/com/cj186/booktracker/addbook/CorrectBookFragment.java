@@ -21,7 +21,6 @@ import com.cj186.booktracker.R;
 import com.cj186.booktracker.model.BookViewModel;
 
 public class CorrectBookFragment extends DialogFragment {
-    private Book book;
 
     @NonNull
     @Override
@@ -34,29 +33,35 @@ public class CorrectBookFragment extends DialogFragment {
         // Create our settings view and set it as our builder's view.
         View view = inflater.inflate(R.layout.is_correct_book_fragment, null);
 
+        // Get our book.
         BookViewModel bookViewModel = new ViewModelProvider(addBookActivity).get(BookViewModel.class);
-        book = bookViewModel.getIntermediateBook().getValue();
+        Book book = bookViewModel.getIntermediateBook().getValue();
 
+        // Populate our buttons
         Button no = view.findViewById(R.id.no);
         Button yes = view.findViewById(R.id.yes);
 
+        // Populate our book specific views.
         ImageView cover = view.findViewById(R.id.book_cover);
         TextView title = view.findViewById(R.id.title);
         TextView author = view.findViewById(R.id.author);
 
         if(book == null){
+            // If we don't have a book, dismiss the view.
             Bundle result = new Bundle();
             result.putBoolean("isCorrect", false);
             getParentFragmentManager().setFragmentResult("correct_book_result", result);
             dismiss();
         }
         else{
+            // Else we populate all fields with our book's data.
             cover.setImageBitmap(BitmapFactory.decodeByteArray(book.getImageBytes(), 0, book.getImageBytes().length));
             title.setText(book.getTitle());
             author.setText(book.getAuthor());
         }
 
         no.setOnClickListener(v -> {
+            // If "No" is clicked, we set false as our result and dismiss the dialog.
             Bundle result = new Bundle();
             result.putBoolean("isCorrect", false);
             getParentFragmentManager().setFragmentResult("correct_book_result", result);
@@ -64,12 +69,14 @@ public class CorrectBookFragment extends DialogFragment {
         });
 
         yes.setOnClickListener(v -> {
+            // If "Yes" is clicked, we set true as our result and dismiss the dialog.
             Bundle result = new Bundle();
             result.putBoolean("isCorrect", true);
             getParentFragmentManager().setFragmentResult("correct_book_result", result);
             dismiss();
         });
 
+        // Return the builder.
         builder.setView(view);
         return builder.create();
     }

@@ -27,17 +27,23 @@ public class BookDescriptionActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Set the content view based up orientation.
         if(getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE)
             setContentView(R.layout.activity_book_description);
         else
             setContentView(R.layout.activity_book_description_landscape);
 
+        // Get the book's id from intent, then pull the book from our database.
         Intent intent = getIntent();
         Cursor dbResult = SQLHandler.getBookById(intent.getIntExtra("book_obj", -1));
+
+        // Create our book.
         if(dbResult.moveToFirst())
             book = new Book(dbResult);
         boolean storedFavoriteValue = book.isFavorite();
 
+        // Populate our views.
         ImageView cover = findViewById(R.id.book_cover);
         TextView title = findViewById(R.id.title);
         TextView author = findViewById(R.id.author);
@@ -48,10 +54,12 @@ public class BookDescriptionActivity extends BaseActivity {
 
         // Add our statuses to our dropdown menu.
         String[] items = {Status.COMPLETED.getLabel(), Status.REREADING.getLabel(), Status.PLANNING_TO_READ.getLabel(), Status.CURRENTLY_READING.getLabel()};
+        // Populate our spinner.
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
         status.setAdapter(adapter);
         status.setSelection(adapter.getPosition(book.getStatus().getLabel()));
 
+        // Set the views with our book's data.
         cover.setImageBitmap(BitmapFactory.decodeByteArray(book.getImageBytes(), 0,book.getImageBytes().length));
         title.setText(book.getTitle());
         author.setText(book.getAuthor());
@@ -59,11 +67,14 @@ public class BookDescriptionActivity extends BaseActivity {
         publishYear.setText(getString(R.string.publish_year_s, (!book.getYearPublished().isEmpty()) ? book.getYearPublished() : "N/A"));
         description.setText((!book.getDescription().isEmpty()) ? book.getDescription() : "");
 
+        // Populate the close button, delete button, and favorite button.
         Button closeBtn = findViewById(R.id.close_btn);
         ImageButton deleteBtn = findViewById(R.id.remove_book_btn);
         ImageButton favoriteBtn = findViewById(R.id.favorite_btn);
         deleteBtn.setOnClickListener(v -> {
-            ConfirmDeleteFragment confirmDeleteFragment = new ConfirmDeleteFragment(book.getTitle());
+            // On Click listener asks the user if they're sure,
+            // then removes the book from the database.
+            ConfirmDeleteFragment confirmDeleteFragment = new ConfirmDeleteFragment();
             confirmDeleteFragment.setOnConfirmationListener(result ->{
                 if(result){
                     SQLHandler.removeBook(book.getId());
@@ -74,6 +85,7 @@ public class BookDescriptionActivity extends BaseActivity {
         });
 
         closeBtn.setOnClickListener(i -> {
+            // Closes the activity and saves any changed data.
             if(!status.getSelectedItem().equals(book.getStatus().getLabel()))
                 SQLHandler.updateBook(book.getId(), Status.fromLabel(status.getSelectedItem().toString()));
             if(!book.isFavorite() == storedFavoriteValue)
@@ -81,12 +93,14 @@ public class BookDescriptionActivity extends BaseActivity {
             finish();
         });
 
+        // Change the image button for favorites.
         if(storedFavoriteValue)
             favoriteBtn.setImageResource(R.drawable.filled_star);
         else
             favoriteBtn.setImageResource(R.drawable.unfilled_star);
 
         favoriteBtn.setOnClickListener(i ->{
+            // Play a sound and change the image button's icon.
             book.setFavoriteStatus(!book.isFavorite());
             MediaHandler.playSfx(this, R.raw.pop);
             if(book.isFavorite())

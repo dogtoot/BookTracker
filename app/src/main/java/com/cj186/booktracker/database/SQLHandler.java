@@ -34,6 +34,7 @@ public class SQLHandler {
     }
 
     public static void updateBook(int id, Status status){
+        // Update a book's status using ID.
         ContentValues values = new ContentValues();
         values.put(DBHelper.getColumnStatus(), status.getLabel());
 
@@ -41,6 +42,7 @@ public class SQLHandler {
     }
 
     public static void updateBook(int id, boolean favoriteStatus){
+        // Update a book's favorite status using ID.
         ContentValues values = new ContentValues();
         values.put(DBHelper.getColumnFavoriteStatus(), favoriteStatus ? 1 : 0);
 
@@ -48,6 +50,7 @@ public class SQLHandler {
     }
 
     public static void removeBook(int id){
+        // Delete book based on ID.
         db.delete(DBHelper.getTableBooks(), DBHelper.getColumnId() + " = ?", new String[] { String.valueOf(id)});
     }
 

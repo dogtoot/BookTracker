@@ -54,10 +54,13 @@ public class LibraryAdapter extends RecyclerView.Adapter<BookViewHolder>{
 
     public void setFilter(boolean useFavorites) {
         if (useFavorites) {
+            // Use only books marked as favorite
             displayedList = bookList.stream()
                     .filter(Book::isFavorite)
                     .collect(Collectors.toCollection(ArrayList::new));
-        } else {
+        }
+        else {
+            // Use all books.
             displayedList = new ArrayList<>(bookList);
         }
 
@@ -65,6 +68,7 @@ public class LibraryAdapter extends RecyclerView.Adapter<BookViewHolder>{
     }
 
     public void updateBooks(ArrayList<Book> newBooks){
+        // Update the list.
         bookList.clear();
         bookList.addAll(newBooks);
         displayedList = new ArrayList<>(bookList);

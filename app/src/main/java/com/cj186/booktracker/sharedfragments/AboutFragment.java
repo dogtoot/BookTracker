@@ -20,10 +20,11 @@ public class AboutFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogCustom);
         // Get our inflater.
         LayoutInflater inflater = requireActivity().getLayoutInflater();
-        // Create our settings view and set it as our builder's view.
+        // Create our about view and set it as our builder's view.
         View view = inflater.inflate(R.layout.about_fragment, null);
         builder.setView(view);
 
+        // Set functionality for the close button.
         Button closeBtn = view.findViewById(R.id.close_btn);
         closeBtn.setOnClickListener(v -> dismiss());
         return builder.create();

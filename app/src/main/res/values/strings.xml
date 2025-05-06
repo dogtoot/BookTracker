@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BookTracker</string>
+    <string name="app_name">Book Tracker</string>
     <string name="add_book_btn_str">Add Book</string>
     <string name="favorites_btn_str">Favorites</string>
     <string name="all_books_btn_str">All Books</string>

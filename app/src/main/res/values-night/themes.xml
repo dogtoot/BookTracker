@@ -10,7 +10,7 @@
         <item name="android:textColorPrimary">#FFFFFF</item>
         <item name="android:background">#494949</item>
     </style>
-    <style name="CustomDefaultConfirmationDialog" parent="Theme.AppCompat.Dialog.Alert">
+    <style name="CustomDefaultConfirmationDialog" parent="Theme.Material3.Dark.Dialog.Alert">
         <!-- Custom background color for the dialog -->
         <item name="android:background">#494949</item>
         <!-- Custom text color for the dialog's message -->

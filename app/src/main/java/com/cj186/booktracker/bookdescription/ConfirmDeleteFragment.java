@@ -9,28 +9,27 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.cj186.booktracker.R;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class ConfirmDeleteFragment extends DialogFragment {
+    // Listener interface.
     public interface ConfirmationListener{
         void onConfirmed(boolean result);
     }
 
+    // Listener setter.
     private ConfirmationListener listener;
     public void setOnConfirmationListener(ConfirmationListener listener){
         this.listener = listener;
     }
 
-    private final String bookName;
-    public ConfirmDeleteFragment(String bookName){
-        this.bookName = bookName;
-    }
-
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        return new AlertDialog.Builder(requireContext(), R.style.CustomDefaultConfirmationDialog)
+        // Return a dialog box with yes and no as options.
+        return new MaterialAlertDialogBuilder(requireContext(), R.style.CustomDefaultConfirmationDialog)
                 .setTitle("Confirm Book Deletion")
-                .setMessage("Are you sure you want to remove " + bookName)
+                .setMessage("Are you sure you want to delete this book?")
                 .setPositiveButton("Yes", (dialog, which) -> {
                     if (listener != null) {
                         listener.onConfirmed(true);

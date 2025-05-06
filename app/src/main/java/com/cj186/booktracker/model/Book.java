@@ -42,6 +42,7 @@ public class Book {
     }
 
     public Book(Cursor dbResult){
+        // Create a book using a cursor.
         this.id = dbResult.getInt(dbResult.getColumnIndexOrThrow(DBHelper.getColumnId()));
         this.imageBytes = dbResult.getBlob(dbResult.getColumnIndexOrThrow(DBHelper.getColumnImageBlob()));
         this.title = dbResult.getString(dbResult.getColumnIndexOrThrow(DBHelper.getColumnTitle()));

@@ -7,7 +7,7 @@
     <style name="AlertDialogCustom" parent="Theme.AppCompat.Dialog.Alert">
         <item name="android:colorPrimary">#386994</item>
     </style>
-    <style name="CustomDefaultConfirmationDialog" parent="Theme.AppCompat.Dialog.Alert">
+    <style name="CustomDefaultConfirmationDialog" parent="Theme.Material3.Light.Dialog.Alert">
         <!-- Custom background color for the dialog -->
         <item name="android:background">#FFFFFF</item>
         <!-- Custom text color for the dialog's message -->
