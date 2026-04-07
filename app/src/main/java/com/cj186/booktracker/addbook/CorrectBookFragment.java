@@ -20,6 +20,14 @@ import androidx.lifecycle.ViewModelProvider;
 import com.cj186.booktracker.R;
 import com.cj186.booktracker.model.BookViewModel;
 
+/**
+ * Collin J. Johnson
+ * 5/6/2025
+ * 2376 Mobile Applications Development
+ *
+ * This fragment asks the user if the book is correct.
+ */
+
 public class CorrectBookFragment extends DialogFragment {
 
     @NonNull

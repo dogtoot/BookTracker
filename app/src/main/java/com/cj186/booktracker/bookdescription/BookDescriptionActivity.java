@@ -12,31 +12,44 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.cj186.booktracker.BaseActivity;
 import com.cj186.booktracker.R;
-import com.cj186.booktracker.database.DBHelper;
 import com.cj186.booktracker.database.SQLHandler;
 import com.cj186.booktracker.model.Book;
 import com.cj186.booktracker.model.Status;
 import com.cj186.booktracker.utils.MediaHandler;
 
+/**
+ * Collin J. Johnson
+ * 5/6/2025
+ * 2376 Mobile Applications Development
+ *
+ * This activity shows a description for the book selected in the main library.
+ */
+
 public class BookDescriptionActivity extends BaseActivity {
 
     private Book book;
+    private ImageButton favoriteBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Set the content view based up orientation.
-        if(getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE)
+        if (getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE)
             setContentView(R.layout.activity_book_description);
         else
             setContentView(R.layout.activity_book_description_landscape);
 
         // Get the book's id from intent, then pull the book from our database.
         Intent intent = getIntent();
-        Cursor dbResult = SQLHandler.getBookById(intent.getIntExtra("book_obj", -1));
+        int id = intent.getIntExtra("book_obj", -1);
+        if(id == -1)
+            finish();
+        Cursor dbResult = SQLHandler.getBookById(id);
 
         // Create our book.
         if(dbResult.moveToFirst())
@@ -70,7 +83,7 @@ public class BookDescriptionActivity extends BaseActivity {
         // Populate the close button, delete button, and favorite button.
         Button closeBtn = findViewById(R.id.close_btn);
         ImageButton deleteBtn = findViewById(R.id.remove_book_btn);
-        ImageButton favoriteBtn = findViewById(R.id.favorite_btn);
+        favoriteBtn = findViewById(R.id.favorite_btn);
         deleteBtn.setOnClickListener(v -> {
             // On Click listener asks the user if they're sure,
             // then removes the book from the database.
@@ -93,8 +106,12 @@ public class BookDescriptionActivity extends BaseActivity {
             finish();
         });
 
+        flipCheckbox();
+    }
+
+    private void flipCheckbox(){
         // Change the image button for favorites.
-        if(storedFavoriteValue)
+        if(book.isFavorite())
             favoriteBtn.setImageResource(R.drawable.filled_star);
         else
             favoriteBtn.setImageResource(R.drawable.unfilled_star);
@@ -108,5 +125,20 @@ public class BookDescriptionActivity extends BaseActivity {
             else
                 favoriteBtn.setImageResource(R.drawable.unfilled_star);
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // Put our book's favorite status.
+        outState.putBoolean("FAVORITE_VALUE", book.isFavorite());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle inState){
+        super.onRestoreInstanceState(inState);
+        // Get our boolean and set our checkbox.
+        book.setFavoriteStatus(inState.getBoolean("FAVORITE_VALUE"));
+        flipCheckbox();
     }
 }

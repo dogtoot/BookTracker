@@ -15,6 +15,14 @@ import androidx.fragment.app.DialogFragment;
 
 import com.cj186.booktracker.R;
 
+/**
+ * Collin J. Johnson
+ * 5/6/2025
+ * 2376 Mobile Applications Development
+ *
+ * This fragment allows the user to manually enter an ISBN
+ */
+
 public class EnterISBNFragment extends DialogFragment {
     @NonNull
     @Override

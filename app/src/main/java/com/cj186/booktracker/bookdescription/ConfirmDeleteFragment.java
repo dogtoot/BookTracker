@@ -1,6 +1,5 @@
 package com.cj186.booktracker.bookdescription;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
 
@@ -10,6 +9,14 @@ import androidx.fragment.app.DialogFragment;
 
 import com.cj186.booktracker.R;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+/**
+ * Collin J. Johnson
+ * 5/6/2025
+ * 2376 Mobile Applications Development
+ *
+ * This fragment asks the user to confirm the deletion of a book.
+ */
 
 public class ConfirmDeleteFragment extends DialogFragment {
     // Listener interface.

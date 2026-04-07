@@ -4,6 +4,14 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+/**
+ * Collin J. Johnson
+ * 5/6/2025
+ * 2376 Mobile Applications Development
+ *
+ * This class creates and specifies data relating to the database.
+ */
+
 public class DBHelper extends SQLiteOpenHelper {
     // Database information.
     private static final String DATABASE_NAME = "library.db";
@@ -47,9 +55,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-    }
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {}
 
     // Column getters.
     public static String getTableBooks() {

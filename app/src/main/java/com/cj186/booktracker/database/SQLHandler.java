@@ -6,7 +6,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.cj186.booktracker.model.Status;
-import com.cj186.booktracker.model.Book;
+
+/**
+ * Collin J. Johnson
+ * 5/6/2025
+ * 2376 Mobile Applications Development
+ *
+ * This class gets and puts data into the database.
+ */
 
 public class SQLHandler {
     private static SQLiteDatabase db;
@@ -66,6 +73,7 @@ public class SQLHandler {
     }
 
     public static Cursor getBookById(int id){
+        // Gets a book by id.
         String selection = "_id = ?";
         String[] selectionArgs = { String.valueOf(id) };
 

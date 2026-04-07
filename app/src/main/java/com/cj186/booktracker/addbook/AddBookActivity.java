@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.cj186.booktracker.BaseActivity;
@@ -32,6 +33,17 @@ import com.cj186.booktracker.database.SQLHandler;
 import com.cj186.booktracker.model.Status;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+/**
+ * Collin J. Johnson
+ * 5/6/2025
+ * 2376 Mobile Applications Development
+ *
+ * This activity allows the user to add books.
+ */
 
 public class AddBookActivity extends BaseActivity {
     // Image picker
@@ -90,17 +102,6 @@ public class AddBookActivity extends BaseActivity {
             }
         });
 
-        if(bookViewModel.getIntermediateBook().getValue() != null){
-            Book currentBook = bookViewModel.getIntermediateBook().getValue();
-            // Set the book's cover using a new thread to prevent the main thread from being held up during decoding.
-            new Thread(() -> {
-                Bitmap bitmap = BitmapFactory.decodeByteArray(currentBook.getImageBytes(), 0, currentBook.getImageBytes().length);
-                new Handler(Looper.getMainLooper()).post(() -> {
-                    cover.setImageBitmap(bitmap);
-                });
-            }).start();
-        }
-
         scanISBNBtn.setOnClickListener(view -> {
             // Open the scan fragment.
             ScanISBNFragment dialog = new ScanISBNFragment();
@@ -136,7 +137,6 @@ public class AddBookActivity extends BaseActivity {
                 ISBN.getText().toString(),
                 favoriteStatus.isChecked()
         );
-
         finish();
     }
 
@@ -225,9 +225,7 @@ public class AddBookActivity extends BaseActivity {
             new Thread(() -> {
                 // Decode imageBytes and set cover to the bitmap returned.
                 Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                new Handler(Looper.getMainLooper()).post(() -> {
-                    cover.setImageBitmap(bitmap);
-                });
+                new Handler(Looper.getMainLooper()).post(() -> cover.setImageBitmap(bitmap));
             }).start();
         }
     }
@@ -282,5 +280,38 @@ public class AddBookActivity extends BaseActivity {
             intent.setType("image/*");
             imagePickerLauncher.launch(intent);
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // Cache the cover for orientation change.
+        if(cover.getDrawable() != null){
+            // Create a new file using the cache directory called cover.jpg.
+            File coverCacheFile = new File(getCacheDir(), "cover.jpg");
+            try(FileOutputStream out = new FileOutputStream(coverCacheFile)){
+                // Save the file to the cache, then write the path to the outState.
+                Bitmap bitmap = ((BitmapDrawable) cover.getDrawable()).getBitmap();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                outState.putString("COVER_CACHE_FILE", coverCacheFile.getAbsolutePath());
+            }
+            catch (IOException e){
+                Toast.makeText(this, "Unable to cache image during orientation.", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle inState){
+        super.onRestoreInstanceState(inState);
+        // Load the cover path from cache.
+        String path = inState.getString("COVER_CACHE_FILE");
+        if (path != null) {
+            // Load the file from the path and set the cover.
+            Bitmap bitmap = BitmapFactory.decodeFile(path);
+            cover.setImageBitmap(bitmap);
+            // Delete the file now that we are done with it.
+            new File(path).delete();
+        }
     }
 }

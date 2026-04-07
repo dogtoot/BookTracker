@@ -1,5 +1,13 @@
 package com.cj186.booktracker.model;
 
+/**
+ * Collin J. Johnson
+ * 5/6/2025
+ * 2376 Mobile Applications Development
+ *
+ * This enum holds the statuses the user can select.
+ */
+
 public enum Status {
     CURRENTLY_READING("Currently Reading"),
     REREADING("Re-Reading"),

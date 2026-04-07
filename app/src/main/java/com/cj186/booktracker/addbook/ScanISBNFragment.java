@@ -32,6 +32,14 @@ import java.util.Collections;
 import android.Manifest;
 import android.widget.Toast;
 
+/**
+ * Collin J. Johnson
+ * 5/6/2025
+ * 2376 Mobile Applications Development
+ *
+ * This fragment allows the user to scan an ISBN code on the back of a book.
+ */
+
 public class ScanISBNFragment extends DialogFragment {
     private CompoundBarcodeView barcodeView;
 

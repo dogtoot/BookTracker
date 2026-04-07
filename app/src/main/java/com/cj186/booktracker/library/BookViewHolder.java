@@ -11,11 +11,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.cj186.booktracker.model.Book;
 import com.cj186.booktracker.R;
 
+/**
+ * Collin J. Johnson
+ * 5/6/2025
+ * 2376 Mobile Applications Development
+ *
+ * This view holder is the covers seen on the library screen.
+ */
+
 public class BookViewHolder extends RecyclerView.ViewHolder{
     // Cover and status for the library.
-    private ImageView cover;
-    private ImageView favorite;
-    private TextView status;
+    private final ImageView cover;
+    private final ImageView favorite;
+    private final TextView status;
 
     public BookViewHolder(@NonNull View itemView) {
         // Call the super constructor and set the views.

@@ -16,6 +16,14 @@ import com.cj186.booktracker.R;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+/**
+ * Collin J. Johnson
+ * 5/6/2025
+ * 2376 Mobile Applications Development
+ *
+ * This adapter dictates what books are shown in the library.
+ */
+
 public class LibraryAdapter extends RecyclerView.Adapter<BookViewHolder>{
     private final ArrayList<Book> bookList;
     private ArrayList<Book> displayedList;

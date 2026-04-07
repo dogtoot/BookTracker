@@ -21,6 +21,11 @@ import com.cj186.booktracker.addbook.AddBookActivity;
 import java.util.ArrayList;
 
 /**
+ * Collin J. Johnson
+ * <br>5/6/2025
+ * <br>2376 Mobile Applications Development
+ * <br>
+ * <br>
  * Welcome to Book Tracker, this is the first activity shown when the app is run.
  * It is the library where users can see all of their books.
  * <pre>

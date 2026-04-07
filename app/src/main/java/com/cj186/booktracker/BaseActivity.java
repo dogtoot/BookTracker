@@ -8,12 +8,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
 
 import com.cj186.booktracker.sharedfragments.AboutFragment;
+
+/**
+ * Collin J. Johnson
+ * 5/6/2025
+ * 2376 Mobile Applications Development
+ *
+ * This activity is inherited by all activities, it contains the toolbar and theme methods.
+ */
 
 public class BaseActivity extends AppCompatActivity {
     private CheckBox useDarkmode;
@@ -34,7 +43,10 @@ public class BaseActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(toolbarId);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            ActionBar actionBar = getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setDisplayShowTitleEnabled(false);
+            }
         }
     }
 

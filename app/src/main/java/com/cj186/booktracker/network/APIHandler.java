@@ -22,9 +22,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * Collin J. Johnson
+ * 5/6/2025
+ * 2376 Mobile Applications Development
+ *
+ * This class pulls book data based upon isbn from Google Books/Open Library.
+ */
+
 public class APIHandler {
-    // I really do wish I could collapse this array. :/
-    // I really don't need 200 lines of publishers taking up my entire screen.
+    // List of trusted publishers to prioritize from open library.
     private static final String[] TRUSTED_PUBLISHERS = {
             // General and Fiction Publishers
             "Penguin Random House",
@@ -236,14 +243,14 @@ public class APIHandler {
             // Attempt to get a book from Google Books.
             return getBookFromGoogleBooksUsingISBN(isbn);
         }
-        catch (JSONException e){}
+        catch (JSONException ignored){}
 
         try{
             // Attempt to get the book from OpenLibrary,
             // we use this as a fallback as it is considerably slower.
             return getBookFromOpenLibraryUsingISBN(isbn, "eng");
         }
-        catch (JSONException e){}
+        catch (JSONException ignored){}
 
         return null;
     }
@@ -289,7 +296,7 @@ public class APIHandler {
         if(authorArray.length() > 1){
             for(int i = 0; i < authorArray.length(); i++){
                 if(authorArray.get(i) instanceof String){
-                    author.append(authorArray.get(i)).append("\n");
+                    author.append(authorArray.get(i)).append(", ");
                 }
             }
         }
@@ -323,7 +330,7 @@ public class APIHandler {
         JSONObject responseJson;
         responseJson = new JSONObject(getAPIResponseFromURL( parentUrl + "/isbn/" + ISBN + ".json"));
         // OpenLibrary has more variation in the date format, so we just attempt to pull the date.
-        String publishYear = "N/A";
+        String publishYear;
         publishYear = responseJson.optString("publish_date");
 
         // OpenLibrary splits books into works, editions, books, and authors. Here we get the workID.
@@ -444,7 +451,7 @@ public class APIHandler {
         return editionObjects;
     }
 
-    public static boolean isTrustedPublisher(String inputPublisher){
+    private static boolean isTrustedPublisher(String inputPublisher){
         // Normalize the input publisher.
         String normalizedInput = normalizeString(inputPublisher);
         for(String trustedPublisher : TRUSTED_PUBLISHERS){
@@ -488,8 +495,8 @@ public class APIHandler {
             // Close the input and return the byte array in outputStream.
             input.close();
             return outputStream.toByteArray();
-
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             return null;
         }
     }

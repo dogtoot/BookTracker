@@ -4,16 +4,24 @@ import android.database.Cursor;
 
 import com.cj186.booktracker.database.DBHelper;
 
+/**
+ * Collin J. Johnson
+ * 5/6/2025
+ * 2376 Mobile Applications Development
+ *
+ * This class holds book data.
+ */
+
 public class Book {
     // Fields for a book.
     private int id;
-    private byte[] imageBytes;
-    private String title;
-    private String author;
-    private String description;
-    private Status status;
-    private String yearPublished;
-    private String ISBN;
+    private final byte[] imageBytes;
+    private final String title;
+    private final String author;
+    private final String description;
+    private final Status status;
+    private final String yearPublished;
+    private final String ISBN;
     private boolean favoriteStatus;
 
     public Book(byte[] imageBytes, String title, String author, String description, Status status, String yearPublished, String ISBN, boolean favoriteStatus) {
@@ -66,7 +74,6 @@ public class Book {
     public Status getStatus() {
         return status;
     }
-    public void setStatus(Status status){ this.status = status; }
 
     public int getId() {
         return id;
