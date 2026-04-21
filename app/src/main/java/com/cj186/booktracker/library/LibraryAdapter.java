@@ -7,14 +7,18 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cj186.booktracker.model.Book;
 import com.cj186.booktracker.bookdescription.BookDescriptionActivity;
 import com.cj186.booktracker.R;
+import com.cj186.booktracker.model.Filter;
+import com.cj186.booktracker.model.Status;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Collin J. Johnson
@@ -60,19 +64,54 @@ public class LibraryAdapter extends RecyclerView.Adapter<BookViewHolder>{
         holder.bind(book);
     }
 
-    public void setFilter(boolean useFavorites) {
-        if (useFavorites) {
-            // Use only books marked as favorite
-            displayedList = bookList.stream()
-                    .filter(Book::isFavorite)
-                    .collect(Collectors.toCollection(ArrayList::new));
-        }
-        else {
-            // Use all books.
-            displayedList = new ArrayList<>(bookList);
+    public void setFilter(Filter filter, boolean favorites) {
+        Stream<Book> stream = bookList.stream();
+
+        switch (filter){
+            case PLANNING_TO_READ:
+                stream = stream.filter(b -> b.getStatus().equals(Status.PLANNING_TO_READ));
+                break;
+            case CURRENTLY_READING:
+                stream = stream.filter(b -> b.getStatus().equals(Status.CURRENTLY_READING));
+                break;
+            case COMPLETED:
+                stream = stream.filter(b -> b.getStatus().equals(Status.COMPLETED));
+                break;
+            case REREADING:
+                stream = stream.filter(b -> b.getStatus().equals(Status.REREADING));
+                break;
+            case ALL:
+                break;
         }
 
-        notifyDataSetChanged();
+        if(favorites)
+            stream = stream.filter(Book::isFavorite);
+
+        ArrayList<Book> newList = stream.collect(Collectors.toCollection(ArrayList::new));
+        DiffUtil.DiffResult diff = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+            @Override
+            public int getOldListSize() {
+                return displayedList.size();
+            }
+
+            @Override
+            public int getNewListSize() {
+                return newList.size();
+            }
+
+            @Override
+            public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                return displayedList.get(oldItemPosition).getId() == newList.get(newItemPosition).getId();
+            }
+
+            @Override
+            public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                return displayedList.get(oldItemPosition).equals(newList.get(newItemPosition));
+            }
+        });
+
+        displayedList = newList;
+        diff.dispatchUpdatesTo(this);
     }
 
     public void updateBooks(ArrayList<Book> newBooks){

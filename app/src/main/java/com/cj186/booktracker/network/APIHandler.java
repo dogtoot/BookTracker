@@ -243,14 +243,18 @@ public class APIHandler {
             // Attempt to get a book from Google Books.
             return getBookFromGoogleBooksUsingISBN(isbn);
         }
-        catch (JSONException ignored){}
+        catch (Exception ignored){
+            Log.w("API Failed", "Unable to connect/utilize Google Books API.");
+        }
 
         try{
             // Attempt to get the book from OpenLibrary,
             // we use this as a fallback as it is considerably slower.
             return getBookFromOpenLibraryUsingISBN(isbn, "eng");
         }
-        catch (JSONException ignored){}
+        catch (Exception ignored){
+            Log.w("API Failed", "Unable to connect/utilize Open Library API.");
+        }
 
         return null;
     }

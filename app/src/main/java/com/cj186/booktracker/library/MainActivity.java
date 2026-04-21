@@ -17,6 +17,7 @@ import com.cj186.booktracker.model.Book;
 import com.cj186.booktracker.R;
 import com.cj186.booktracker.database.SQLHandler;
 import com.cj186.booktracker.addbook.AddBookActivity;
+import com.cj186.booktracker.model.Filter;
 
 import java.util.ArrayList;
 
@@ -133,7 +134,8 @@ public class MainActivity extends BaseActivity {
     private void populateLibrary(){
         // Set the adapter's filter to the opposite of useFavorites.
         boolean useFavorites = favoriteBtn.getText().toString().equals(getString(R.string.favorites_btn_str));
-        adapter.setFilter(!useFavorites);
+        Filter filter = Filter.ALL;
+        adapter.setFilter(filter, !useFavorites);
         // If the adapter is empty, show a textview saying the library has no books.
         if(adapter.getItemCount() == 0){
             emptyTextView.setVisibility(View.VISIBLE);
@@ -149,10 +151,20 @@ public class MainActivity extends BaseActivity {
         // Set the adapter's filter to useFavorites.
         boolean useFavorites = favoriteBtn.getText().toString().equals(getString(R.string.favorites_btn_str));
         favoriteBtn.setText(useFavorites ? R.string.all_books_btn_str : R.string.favorites_btn_str);
-        adapter.setFilter(useFavorites);
+        Filter filter = Filter.ALL;
+        adapter.setFilter(filter, useFavorites);
 
-        // Populate our library.
-        populateLibrary();
+        // Update the visibility after the animation.
+        libraryList.post(() -> {
+            if (adapter.getItemCount() == 0) {
+                emptyTextView.setVisibility(View.VISIBLE);
+                libraryList.setVisibility(View.GONE);
+            }
+            else {
+                emptyTextView.setVisibility(View.GONE);
+                libraryList.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     @Override
