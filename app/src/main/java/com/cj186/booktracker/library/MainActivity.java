@@ -5,7 +5,10 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,6 +21,7 @@ import com.cj186.booktracker.R;
 import com.cj186.booktracker.database.SQLHandler;
 import com.cj186.booktracker.addbook.AddBookActivity;
 import com.cj186.booktracker.model.Filter;
+import com.cj186.booktracker.model.Status;
 
 import java.util.ArrayList;
 
@@ -54,6 +58,16 @@ public class MainActivity extends BaseActivity {
     private Button favoriteBtn;
     private Button addBook;
 
+    private final String[] spinnerItems = {
+            Filter.ALL.getLabel(),
+            Filter.COMPLETED.getLabel(),
+            Filter.REREADING.getLabel(),
+            Filter.PLANNING_TO_READ.getLabel(),
+            Filter.CURRENTLY_READING.getLabel()
+    };
+
+    private Filter currentFilter = Filter.ALL;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +96,25 @@ public class MainActivity extends BaseActivity {
         // Populate our buttons.
         favoriteBtn.setOnClickListener(view -> swapLibrary());
         addBook.setOnClickListener(view -> startAddBookActivity());
+
+        Spinner spinner = (Spinner) findViewById(R.id.filter_spinner);
+        // Create an ArrayAdapter using the string array and a default spinner layout.
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, spinnerItems);
+        // Specify the layout to use when the list of choices appears.
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner.
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                filterLibrary(Filter.fromLabel((String) spinner.getSelectedItem()));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                filterLibrary(Filter.ALL);
+            }
+        });
     }
 
     @Override
@@ -131,11 +164,26 @@ public class MainActivity extends BaseActivity {
         cursor.close();
     }
 
+    private void filterLibrary(Filter filter){
+        currentFilter = filter;
+        boolean useFavorites = favoriteBtn.getText().toString().equals(getString(R.string.favorites_btn_str));
+        adapter.setFilter(filter, !useFavorites);
+        libraryList.post(() -> {
+            if (adapter.getItemCount() == 0) {
+                emptyTextView.setVisibility(View.VISIBLE);
+                libraryList.setVisibility(View.GONE);
+            }
+            else {
+                emptyTextView.setVisibility(View.GONE);
+                libraryList.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
     private void populateLibrary(){
         // Set the adapter's filter to the opposite of useFavorites.
         boolean useFavorites = favoriteBtn.getText().toString().equals(getString(R.string.favorites_btn_str));
-        Filter filter = Filter.ALL;
-        adapter.setFilter(filter, !useFavorites);
+        adapter.setFilter(currentFilter, !useFavorites);
         // If the adapter is empty, show a textview saying the library has no books.
         if(adapter.getItemCount() == 0){
             emptyTextView.setVisibility(View.VISIBLE);
@@ -151,8 +199,7 @@ public class MainActivity extends BaseActivity {
         // Set the adapter's filter to useFavorites.
         boolean useFavorites = favoriteBtn.getText().toString().equals(getString(R.string.favorites_btn_str));
         favoriteBtn.setText(useFavorites ? R.string.all_books_btn_str : R.string.favorites_btn_str);
-        Filter filter = Filter.ALL;
-        adapter.setFilter(filter, useFavorites);
+        adapter.setFilter(currentFilter, useFavorites);
 
         // Update the visibility after the animation.
         libraryList.post(() -> {

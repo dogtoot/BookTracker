@@ -18,7 +18,7 @@
     <string name="year_published">Year Published:</string>
     <string name="favorite">Favorite</string>
     <string name="darkmode">Darkmode</string>
-    <string name="app_version">Version: 1.0.21</string>
+    <string name="app_version">Version: 1.0.22</string>
     <string name="app_description">Book Tracker is an app designed to allow readers to save, assign statuses to, and find books.</string>
     <string name="app_author">Made by Collin J. Johnson</string>
     <string name="isbn_s">ISBN: %s</string>
