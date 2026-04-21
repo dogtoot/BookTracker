@@ -22,4 +22,6 @@
     <string name="app_description">Book Tracker is an app designed to allow readers to save, assign statuses to, and find books.</string>
     <string name="app_author">Made by Collin J. Johnson</string>
     <string name="isbn_s">ISBN: %s</string>
+    <string name="use_darkmode">Use Darkmode:</string>
+    <string name="settings">Settings</string>
 </resources>

@@ -15,6 +15,7 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
 
 import com.cj186.booktracker.sharedfragments.AboutFragment;
+import com.cj186.booktracker.sharedfragments.SettingsFragment;
 
 /**
  * Collin J. Johnson
@@ -25,14 +26,14 @@ import com.cj186.booktracker.sharedfragments.AboutFragment;
  */
 
 public class BaseActivity extends AppCompatActivity {
-    private CheckBox useDarkmode;
+    //private CheckBox useDarkmode;
 
     @Override
     public void setContentView(int layoutResID) {
         super.setContentView(layoutResID);
         // Get the userDarkmode button and set its listener.
-        useDarkmode = findViewById(R.id.use_darkmode);
-        useDarkmode.setOnClickListener(this::changeTheme);
+        /*useDarkmode = findViewById(R.id.use_darkmode);
+        useDarkmode.setOnClickListener(this::changeTheme);*/
         // Initialize our theme and toolbar.
         initTheme();
         setupToolbar(R.id.toolbar);
@@ -65,7 +66,7 @@ public class BaseActivity extends AppCompatActivity {
         boolean isDarkmode = pref.getBoolean("USE_DARKMODE", (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES);
 
         // Set darkmode on or off.
-        checkBoxChecked(isDarkmode, useDarkmode);
+        //checkBoxChecked(isDarkmode, useDarkmode);
         if(isDarkmode)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         else
@@ -73,20 +74,21 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     protected void changeTheme(View view){
-        // Put USE_DARKMODE into preferences.
-        SharedPreferences pref = this.getSharedPreferences("APP_PREFERENCES", MODE_PRIVATE);
-        pref.edit().putBoolean("USE_DARKMODE", useDarkmode.isChecked()).apply();
-        // Set the theme.
-        if(useDarkmode.isChecked())
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        else
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+//        // Put USE_DARKMODE into preferences.
+//        SharedPreferences pref = this.getSharedPreferences("APP_PREFERENCES", MODE_PRIVATE);
+//        pref.edit().putBoolean("USE_DARKMODE", useDarkmode.isChecked()).apply();
+//        // Set the theme.
+//        if(useDarkmode.isChecked())
+//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+//        else
+//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the overflow menu.
         getMenuInflater().inflate(R.menu.about, menu);
+        getMenuInflater().inflate(R.menu.settings, menu);
         return true;
     }
 
@@ -96,6 +98,12 @@ public class BaseActivity extends AppCompatActivity {
             // Open the about dialog.
             AboutFragment dialog = new AboutFragment();
             dialog.show(getSupportFragmentManager(), "aboutFragment");
+            return true;
+        }
+        if (item.getItemId() == R.id.settings){
+            // Open the settings dialog.
+            SettingsFragment dialog = new SettingsFragment();
+            dialog.show(getSupportFragmentManager(), "settingsFragment");
             return true;
         }
         return super.onOptionsItemSelected(item);
