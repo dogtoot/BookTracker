@@ -235,6 +235,7 @@ public class APIHandler {
             "Orion Publishing Group"
     };
 
+    private static String currentTitle = "";
 
     public static Book getBookFromISBN(String isbn){
         // Errors are likely, as some books do not contain required meta-data.
@@ -250,10 +251,18 @@ public class APIHandler {
         try{
             // Attempt to get the book from OpenLibrary,
             // we use this as a fallback as it is considerably slower.
-            return getBookFromOpenLibraryUsingISBN(isbn, "eng");
+            Book retBook = getBookFromOpenLibraryUsingISBN(isbn, "eng");
+            currentTitle = "";
+            return retBook;
         }
-        catch (Exception ignored){
-            Log.w("API Failed", "Unable to connect/utilize Open Library API.");
+        catch (Exception top_e){
+            Log.w("API Failed", "Unable to get book by ISBN.\n" + top_e.getMessage());
+            try{
+                return getBooksFromOpenLibraryUsingTitle(currentTitle).get(0);
+            }
+            catch(Exception e){
+                Log.w("API Failed", "Unable to get book by Title.\n" + e.getMessage());
+            }
         }
 
         return null;
@@ -326,6 +335,27 @@ public class APIHandler {
         return new Book(imageBytes, title, author.toString(), description, Status.PLANNING_TO_READ, publishYear, ISBN, false);
     }
 
+    public static ArrayList<Book> getBooksFromOpenLibraryUsingTitle(String title) throws JSONException{
+        ArrayList<Book> books = new ArrayList<>();
+        // Set the parent url.
+        String parentUrl = "https://openlibrary.org";
+        String apiUrl = parentUrl + "/search.json?q=" + title + "&fields=key,isbn&limit=15";
+
+        // Get the response JSON.
+        JSONObject responseJson = new JSONObject(getAPIResponseFromURL(apiUrl));
+
+        JSONArray values = responseJson.getJSONArray("docs");
+
+        for (int i = 0; i < values.length(); ++i){
+            JSONObject work = values.getJSONObject(i);
+            String key = work.getString("key");
+            String isbn = work.getJSONArray("isbn").get(0).toString();
+            books.add(getBookFromOpenLibraryUsingWorkID(key, "en", isbn));
+        }
+
+        return books;
+    }
+
     private static Book getBookFromOpenLibraryUsingISBN(String ISBN, String lang) throws JSONException {
         // Set the parent url.
         String parentUrl = "https://openlibrary.org";
@@ -334,14 +364,20 @@ public class APIHandler {
         JSONObject responseJson;
         responseJson = new JSONObject(getAPIResponseFromURL( parentUrl + "/isbn/" + ISBN + ".json"));
         // OpenLibrary has more variation in the date format, so we just attempt to pull the date.
-        String publishYear;
-        publishYear = responseJson.optString("publish_date");
+        //String publishYear;
+        //publishYear = responseJson.optString("publish_date");
 
         // OpenLibrary splits books into works, editions, books, and authors. Here we get the workID.
         // We have to get the WorkID first in order to get the author, as well as the book.
         JSONArray workIDObject = responseJson.getJSONArray("works");
         JSONObject works = workIDObject.getJSONObject(0);
         String workID = works.getString("key");
+
+        return getBookFromOpenLibraryUsingWorkID(workID, "en", ISBN);
+    }
+
+    private static Book getBookFromOpenLibraryUsingWorkID(String workID, String lang, String ISBN) throws JSONException{
+        String parentUrl = "https://openlibrary.org";
 
         // Here we populate an ArrayList of JSONObjects,
         // which is returned from getOpenLibraryEditions,
@@ -357,7 +393,13 @@ public class APIHandler {
 
         // Get the book title and cover url.
         String title = book.getString("title");
+
+        currentTitle = title;
+
         String cover = book.getJSONArray("covers").get(0).toString();
+
+        // Get the first publish date.
+        String publishYear = book.getString("first_publish_date");
 
         // Get the author.
         JSONArray authorBlock = book.getJSONArray("authors");
@@ -519,6 +561,7 @@ public class APIHandler {
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.setRequestProperty("Accept", "application/json");
+            urlConnection.setRequestProperty("http.useragent", "BookTracker (collinjosephj9@gmail.com)");
             urlConnection.connect();
 
             // Read the inputStream as a BufferedReader.

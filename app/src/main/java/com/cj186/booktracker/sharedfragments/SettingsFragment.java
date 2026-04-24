@@ -16,14 +16,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.DialogFragment;
 
-import com.cj186.booktracker.BaseActivity;
 import com.cj186.booktracker.R;
 
 /**
  * Collin J. Johnson
  * 4/21/2026
  * No longer in class.
- *
  * This fragment shows a settings screen.
  */
 
@@ -38,24 +36,24 @@ public class SettingsFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.settings_fragment, null);
         builder.setView(view);
 
-        CheckBox useDarkmodeChkbox = view.findViewById(R.id.use_darkmode);
+        CheckBox useDarkModeCheckbox = view.findViewById(R.id.use_darkmode);
         SharedPreferences pref = requireActivity().getSharedPreferences("APP_PREFERENCES", Context.MODE_PRIVATE);
-        boolean isDarkmode = pref.getBoolean("USE_DARKMODE", (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES);
+        boolean isDarkMode = pref.getBoolean("USE_DARKMODE", (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES);
 
-        useDarkmodeChkbox.setChecked(isDarkmode);
+        useDarkModeCheckbox.setChecked(isDarkMode);
         Button confirmBtn = view.findViewById(R.id.save_btn);
 
         // Apply changes.
         confirmBtn.setOnClickListener(v -> {
             // Write changes to preferences.
-            pref.edit().putBoolean("USE_DARKMODE", useDarkmodeChkbox.isChecked()).apply();
+            pref.edit().putBoolean("USE_DARKMODE", useDarkModeCheckbox.isChecked()).apply();
 
             // Dismiss the fragment.
             dismiss();
 
             // Apply changes literally.
             AppCompatDelegate.setDefaultNightMode(
-                    useDarkmodeChkbox.isChecked() ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO
+                    useDarkModeCheckbox.isChecked() ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO
             );
         });
 
